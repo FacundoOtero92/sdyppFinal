@@ -41,17 +41,18 @@ jobs:
       uses: hashicorp/setup-terraform@v1
 
     - name: Authenticate with Google Cloud (Coordinador)
+      env:
+        GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS_COORDINADOR }}
       run: |
-        echo "${{ secrets.GOOGLE_CREDENTIALS_COORDINADOR }}" > $HOME/gcloud-coordinador.json
-        gcloud auth activate-service-account --key-file=$HOME/gcloud-coordinador.json
-        gcloud config set project sdyppfinal
+        echo ${{ secrets.GOOGLE_CREDENTIALS_COORDINADOR }} > credentials.json
    
 
     - name: Authenticate with Google Cloud (Minero)
+     
+      env:
+         GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS_MINERO }}
       run: |
-        echo ${{ secrets.GOOGLE_CREDENTIALS_MINERO }} > $HOME/gcloud-minero.json
-        gcloud auth activate-service-account --key-file=$HOME/gcloud-minero.json
-        gcloud config set project sdyppfinal
+        echo ${{ secrets.GOOGLE_CREDENTIALS_MINERO }} > credentials.json
 
     - name: Initialize Terraform
       working-directory: terraform
