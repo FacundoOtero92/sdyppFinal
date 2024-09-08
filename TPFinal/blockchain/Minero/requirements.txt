@@ -1,0 +1,7 @@
+Flask
+pika
+opencv-python
+numpy
+redis
+requests
+google-cloud-storage
