@@ -24,12 +24,12 @@ jobs:
     - name: Install dependencies (Coordinador)
       run: |
         python -m pip install --upgrade pip
-        pip install -r ../TPFinal/blockchain/Coordinador/requirements.txt
+        pip install -r TPFinal/blockchain/Coordinador/requirements.txt
 
     - name: Install dependencies (Minero)
       run: |
         python -m pip install --upgrade pip
-        pip install -r ../TPFinal/blockchain/minero/requirements.txt
+        pip install -r TPFinal/blockchain/minero/requirements.txt
 
     - name: Install Terraform
       uses: hashicorp/setup-terraform@v1
