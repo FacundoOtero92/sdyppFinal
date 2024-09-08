@@ -44,7 +44,7 @@ jobs:
       env:
         GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS_COORDINADOR }}
       run: |
-        echo ${{ secrets.GOOGLE_CREDENTIALS_COORDINADOR }} > credentials.json
+        echo '${{ secrets.GOOGLE_CREDENTIALS_COORDINADOR }}' > credentials.json
    
 
     - name: Authenticate with Google Cloud (Minero)
@@ -52,7 +52,7 @@ jobs:
       env:
          GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS_MINERO }}
       run: |
-        echo ${{ secrets.GOOGLE_CREDENTIALS_MINERO }} > credentials.json
+        echo '${{ secrets.GOOGLE_CREDENTIALS_MINERO }}' > credentials.json
 
     - name: Initialize Terraform
       working-directory: terraform
