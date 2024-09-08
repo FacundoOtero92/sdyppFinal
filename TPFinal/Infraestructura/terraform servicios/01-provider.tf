@@ -1,5 +1,5 @@
 provider "google" {
-  credentials = file(var.credentials_file_path)
+  credentials = file("${path.module}/credentials.json")
   project     = var.project_id
   zone        = var.zone
   region      = var.region
