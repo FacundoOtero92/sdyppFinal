@@ -55,9 +55,7 @@ jobs:
         echo '${{ secrets.GOOGLE_CREDENTIALS_MINERO }}' > credentials.json
     
         
-    - name: Setup Google Cloud Credentials
-      run: |
-        echo '${{ secrets.GOOGLE_CREDENTIALS }}' > credentials.json    
+    
     - name: Initialize Terraform
       working-directory: "TPFinal/Infraestructura/terraform servicios"
       run: terraform init

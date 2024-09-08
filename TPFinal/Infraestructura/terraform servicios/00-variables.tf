@@ -8,15 +8,11 @@ variable "zone" {
   default = "us-east1-c"
 }
 
-# variable "credentials_file_path" {
-
-#   type    = string
-#   default = "credentials.json"
-
-# }
-
 variable "credentials_file_path" {
-  default = "${path.module}/credentials.json"
+
+  type    = string
+  default = "credentials.json"
+
 }
 
 variable "project_id" {
