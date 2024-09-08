@@ -26,6 +26,7 @@ variable "instancias" {
   type    = number
   default = 1
 
+
 }
 
 variable "tipo_vm" {
@@ -43,7 +44,7 @@ variable "metadata_startup_script" {
   default = "../requeriments.sh"
 }
 
-#####Balancer####
+#####Balancer    ####
 
 variable "balancer_name" { default = "balancer" }
 
