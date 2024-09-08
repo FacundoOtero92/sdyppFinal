@@ -69,20 +69,33 @@ jobs:
       run: |
           echo '${{ secrets.GOOGLE_CLOUD_CREDENTIALS }}' > credentials.json
     
-    
+          ls -lah
+
+            BUCKET_NAME="terraform_state_cloud"
+            PREFIX="cluster/state"
+
+            terraform init --reconfigure \
+              --backend-config "bucket=${BUCKET_NAME}" \
+              --backend-config "prefix=${PREFIX}"
+
+            terraform validate
+
+            terraform plan -lock=false
+
+            terraform apply -lock=false --auto-approve
     
       # - name: Initialize Terraform
       # working-directory: "TPFinal/Infraestructura/terraform servicios"
       # run: terraform init
       
-    - name: Plan Terraform changes
-      working-directory: "TPFinal/Infraestructura/terraform servicios"
-      run: terraform plan
+    # - name: Plan Terraform changes
+    #   working-directory: "TPFinal/Infraestructura/terraform servicios"
+    #   run: terraform plan
 
-    - name: Apply Terraform changes
-      if: github.ref == 'refs/heads/main'
-      working-directory: "TPFinal/Infraestructura/terraform servicios"
-      run: terraform apply -auto-approve
+    # - name: Apply Terraform changes
+    #   if: github.ref == 'refs/heads/main'
+    #   working-directory: "TPFinal/Infraestructura/terraform servicios"
+    #   run: terraform apply -auto-approve
 
     - name: Build Docker Images (Coordinador)
       run: |
