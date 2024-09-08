@@ -55,7 +55,9 @@ jobs:
         echo '${{ secrets.GOOGLE_CREDENTIALS_MINERO }}' > credentials.json
     
         
-    
+     # Setup de CLI de Terraform
+    - name: Terraform setup
+      uses: hashicorp/setup-terraform@v3
     - name: Initialize Terraform
       working-directory: "TPFinal/Infraestructura/terraform servicios"
       run: terraform init
