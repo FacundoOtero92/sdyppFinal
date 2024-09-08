@@ -42,9 +42,10 @@ jobs:
 
     - name: Authenticate with Google Cloud (Coordinador)
       run: |
-        echo ${{ secrets.GOOGLE_CREDENTIALS_COORDINADOR }} > $HOME/gcloud-coordinador.json
+        echo "${{ secrets.GOOGLE_CREDENTIALS_COORDINADOR }}" > $HOME/gcloud-coordinador.json
         gcloud auth activate-service-account --key-file=$HOME/gcloud-coordinador.json
         gcloud config set project sdyppfinal
+   
 
     - name: Authenticate with Google Cloud (Minero)
       run: |
