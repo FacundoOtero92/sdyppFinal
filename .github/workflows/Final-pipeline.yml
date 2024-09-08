@@ -55,23 +55,23 @@ jobs:
         echo '${{ secrets.GOOGLE_CREDENTIALS_MINERO }}' > credentials.json
 
     - name: Initialize Terraform
-      working-directory: terraform
+      working-directory: "TPFinal/Infraestructura/terraform servicios"
       run: terraform init
 
     - name: Plan Terraform changes
-      working-directory: terraform
+      working-directory: "TPFinal/Infraestructura/terraform servicios"
       run: terraform plan
 
     - name: Apply Terraform changes
       if: github.ref == 'refs/heads/main'
-      working-directory: terraform
+      working-directory: "TPFinal/Infraestructura/terraform servicios"
       run: terraform apply -auto-approve
 
     - name: Build Docker Images (Coordinador)
       run: |
-        docker build -f coordinador/dockerfile.dockerfile -t coordinador-app .
+        docker build -f TPFinal/blockchain/Coordinador/dockerfile.dockerfile -t coordinador-app .
 
     - name: Build Docker Images (Minero)
       run: |
-        docker build -f minero/worker_cpu.dockerfile -t worker-cpu-app .
-        docker build -f minero/worker_gpu.dockerfile -t worker-gpu-
+        docker build -f TPFinal/blockchain/minero/worker_cpu.dockerfile -t worker-cpu-app .
+        docker build -f TPFinal/blockchain/minero/worker_gpu.dockerfile -t worker-gpu-
