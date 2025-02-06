@@ -2,3 +2,5 @@
 *.lib
 *.exp
 *.txt
+*.json
+credentials.json
