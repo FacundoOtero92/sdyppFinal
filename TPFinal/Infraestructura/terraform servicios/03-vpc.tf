@@ -12,11 +12,4 @@ resource "google_compute_network" "main" {
     google_project_service.container
   ]
 
-   lifecycle {
-    prevent_destroy = true
-    ignore_changes = [
-      name,
-      auto_create_subnetworks
-    ]
-  }
 }

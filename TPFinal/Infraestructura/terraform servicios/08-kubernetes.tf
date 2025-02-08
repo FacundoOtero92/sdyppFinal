@@ -39,15 +39,6 @@ resource "google_container_cluster" "cluster-integrador" {
   ip_allocation_policy {
     cluster_secondary_range_name  = "k8s-pod-range"
     services_secondary_range_name = "k8s-service-range"
-  
-    lifecycle {
-    prevent_destroy = true
-    ignore_changes = [
-      name,
-      auto_create_subnetworks
-    ]
-  }
-  
   }
 
   private_cluster_config {
