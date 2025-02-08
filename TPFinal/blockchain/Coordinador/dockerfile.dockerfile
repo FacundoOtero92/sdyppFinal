@@ -8,5 +8,6 @@ COPY . .
 COPY credentials.json /app/credentials.json
 RUN pip install --upgrade pip
 RUN pip install -r  requirements.txt
+ENV PYTHONUNBUFFERED=1
 ENV GOOGLE_APPLICATION_CREDENTIALS=/app/credentials.json
 CMD ["python", "coordinator.py"]
