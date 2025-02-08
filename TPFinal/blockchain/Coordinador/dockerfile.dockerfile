@@ -6,6 +6,6 @@ RUN apt-get update && apt-get install -y \
 WORKDIR /app
 COPY . .
 COPY credentials.json /app/credentials.json
-RUN pip install -r requirements.txt
+RUN pip install -r  sdyppFinal/TPFinal/blockchain/Coordinador/requirements.txt
 ENV GOOGLE_APPLICATION_CREDENTIALS=/app/credentials.json
 CMD ["python", "coordinator.py"]
