@@ -18,3 +18,5 @@ COPY . .
 
 # Configurar el entorno para logs sin buffer
 ENV PYTHONUNBUFFERED=1
+
+CMD ["python", "worker_cpu.py"]
