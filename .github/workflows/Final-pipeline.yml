@@ -112,10 +112,11 @@ jobs:
       run: |
         docker build -f TPFinal/blockchain/minero/worker_cpu.dockerfile -t worker-cpu-app .
         docker build -f TPFinal/blockchain/minero/worker_gpu.dockerfile -t worker-gpu-
-         - name: Authenticate with Google Cloud
-          env:
+    
+    - name: Authenticate with Google Cloud
+      env:
             GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CLOUD_CREDENTIALS }}
-          run: |
+      run: |
             echo '${{ secrets.GOOGLE_CLOUD_CREDENTIALS }}' > credentials.json
     
     # Configuración de kubectl para interactuar con el clúster de GKE
