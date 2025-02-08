@@ -77,13 +77,18 @@ jobs:
             terraform init --reconfigure \
               --backend-config "bucket=${BUCKET_NAME}" \
               --backend-config "prefix=${PREFIX}"
-
+            
+            terraform import google_compute_network.main projects/sdypp2025/global/networks/main || true
+            terraform import google_compute_address.nat projects/sdypp2025/regions/us-east1/addresses/nat || true
+            terraform import google_compute_firewall.allow-ssh projects/sdypp2025/global/firewalls/allow-ssh || true
+            terraform import google_service_account.kubernetes projects/sdypp2025/serviceAccounts/kubernetes@sdypp2025.iam.gserviceaccount.com || true
+           
             terraform validate
 
             terraform plan -lock=false
 
             terraform apply -lock=false --auto-approve
-    
+      continue-on-error: true
       # - name: Initialize Terraform
       # working-directory: "TPFinal/Infraestructura/terraform servicios"
       # run: terraform init
@@ -96,17 +101,9 @@ jobs:
     #   if: github.ref == 'refs/heads/main'
     #   working-directory: "TPFinal/Infraestructura/terraform servicios"
     #   run: terraform apply -auto-approve
-    - name: Import existing resources to Terraform
-      working-directory: "TPFinal/Infraestructura/terraform servicios"
-      run: |
-        terraform init
-  
-        # Intentar importar recursos, si no existen, continuar sin errores
-        terraform import google_compute_network.main projects/sdypp2025/global/networks/main || true
-        terraform import google_compute_address.nat projects/sdypp2025/regions/us-east1/addresses/nat || true
-        terraform import google_compute_firewall.allow-ssh projects/sdypp2025/global/firewalls/allow-ssh || true
-        terraform import google_service_account.kubernetes projects/sdypp2025/serviceAccounts/kubernetes@sdypp2025.iam.gserviceaccount.com || true
-  
+   
+
+
     - name: Build Docker Images (Coordinador)
       run: |
         docker build -f TPFinal/blockchain/Coordinador/dockerfile.dockerfile -t coordinador-app .
