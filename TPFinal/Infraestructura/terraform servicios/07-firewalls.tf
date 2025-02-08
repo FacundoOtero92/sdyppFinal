@@ -10,6 +10,14 @@ resource "google_compute_firewall" "allow-ssh" {
   }
 
   source_ranges = ["0.0.0.0/0"]
+
+  lifecycle {
+    prevent_destroy = true
+    ignore_changes = [
+      name,
+      auto_create_subnetworks
+    ]
+  }
 }
 
 
@@ -26,6 +34,13 @@ resource "google_compute_firewall" "allow-http" {
   }
 
   source_ranges = ["0.0.0.0/0"]
+  lifecycle {
+    prevent_destroy = true
+    ignore_changes = [
+      name,
+      auto_create_subnetworks
+    ]
+  }
 }
 
 resource "google_compute_firewall" "allow-https" {
@@ -38,16 +53,41 @@ resource "google_compute_firewall" "allow-https" {
   }
 
   source_ranges = ["0.0.0.0/0"]
+
+  lifecycle {
+    prevent_destroy = true
+    ignore_changes = [
+      name,
+      auto_create_subnetworks
+    ]
+  }
+
+
 }
 
 resource "tls_private_key" "ssh_key" {
   algorithm = "RSA"
   rsa_bits  = 4096
+  lifecycle {
+    prevent_destroy = true
+    ignore_changes = [
+      name,
+      auto_create_subnetworks
+    ]
+  }
+
 }
 resource "local_file" "ssh_private_key_pem" {
   content         = tls_private_key.ssh_key.private_key_pem
   filename        = ".ssh/google_compute_engine"
   file_permission = "0600"
+  lifecycle {
+    prevent_destroy = true
+    ignore_changes = [
+      name,
+      auto_create_subnetworks
+    ]
+  }
 }
 
 
@@ -61,6 +101,14 @@ resource "google_compute_firewall" "allow-rabbitmq1" {
   }
 
   source_ranges = ["0.0.0.0/0"]
+
+  lifecycle {
+    prevent_destroy = true
+    ignore_changes = [
+      name,
+      auto_create_subnetworks
+    ]
+  }
 }
 resource "google_compute_firewall" "allow-redis" {
   name    = "allow-redis"
@@ -72,6 +120,14 @@ resource "google_compute_firewall" "allow-redis" {
   }
 
   source_ranges = ["0.0.0.0/0"]
+
+  lifecycle {
+    prevent_destroy = true
+    ignore_changes = [
+      name,
+      auto_create_subnetworks
+    ]
+  }
 }
 
 
@@ -86,4 +142,13 @@ resource "google_compute_firewall" "flask" {
   }
 
   source_ranges = ["0.0.0.0/0"]
+
+  lifecycle {
+    prevent_destroy = true
+    ignore_changes = [
+      name,
+      auto_create_subnetworks
+    ]
+  }
+
 }
