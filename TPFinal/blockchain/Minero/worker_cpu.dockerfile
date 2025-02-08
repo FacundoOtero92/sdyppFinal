@@ -3,10 +3,18 @@ RUN apt-get update && apt-get install -y \
     libgl1-mesa-glx \
     libglib2.0-0 \
     && rm -rf /var/lib/apt/lists/*
+# Establecer el directorio de trabajo en el contenedor
 WORKDIR /app
-COPY . .
-COPY credentials.json /app/credentials.json
+
+# Copiar solo el requirements.txt primero (para cacheo eficiente)
+COPY requirements.txt .
+
+# Actualizar pip y luego instalar dependencias
 RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
-ENV GOOGLE_APPLICATION_CREDENTIALS=/app/credentials.json
-CMD ["python", "worker_cpu.py"]
+
+# Copiar el resto de los archivos después de instalar dependencias
+COPY . .
+
+# Configurar el entorno para logs sin buffer
+ENV PYTHONUNBUFFERED=1
