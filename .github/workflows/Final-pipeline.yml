@@ -111,8 +111,8 @@ jobs:
 
     - name: Build Docker Images (Minero)
       run: |
-          docker build -f TPFinal/blockchain/minero/worker_cpu.dockerfile -t worker-cpu-app TPFinal/blockchain/minero
-          docker build -f TPFinal/blockchain/minero/worker_gpu.dockerfile -t worker-gpu-app TPFinal/blockchain/minero
+          docker build -f TPFinal/blockchain/Minero/worker_cpu.dockerfile -t worker-cpu-app TPFinal/blockchain/Minero
+          docker build -f TPFinal/blockchain/Minero/worker_gpu.dockerfile -t worker-gpu-app TPFinal/blockchain/Minero
       
     # - name: Authenticate with Google Cloud
     #   env:
