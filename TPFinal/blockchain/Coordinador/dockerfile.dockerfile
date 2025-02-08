@@ -1,5 +1,8 @@
-FROM python:3.10.14-alpine3.20
-
+FROM python:3.12.3-slim
+RUN apt-get update && apt-get install -y \
+    libgl1-mesa-glx \
+    libglib2.0-0 \
+    && rm -rf /var/lib/apt/lists/*
 # Establecer el directorio de trabajo en el contenedor
 WORKDIR /app
 
