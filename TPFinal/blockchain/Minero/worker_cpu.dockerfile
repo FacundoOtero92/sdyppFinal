@@ -6,6 +6,7 @@ RUN apt-get update && apt-get install -y \
 WORKDIR /app
 COPY . .
 COPY credentials.json /app/credentials.json
+RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
 ENV GOOGLE_APPLICATION_CREDENTIALS=/app/credentials.json
 CMD ["python", "worker_cpu.py"]
