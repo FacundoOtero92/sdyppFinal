@@ -105,3 +105,30 @@ jobs:
       run: |
         docker build -f TPFinal/blockchain/minero/worker_cpu.dockerfile -t worker-cpu-app .
         docker build -f TPFinal/blockchain/minero/worker_gpu.dockerfile -t worker-gpu-
+         - name: Authenticate with Google Cloud
+          env:
+            GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CLOUD_CREDENTIALS }}
+          run: |
+            echo '${{ secrets.GOOGLE_CLOUD_CREDENTIALS }}' > credentials.json
+    
+        # Configuración de kubectl para interactuar con el clúster de GKE
+        - name: Set up Google Cloud SDK
+          uses: google-github-actions/setup-gcloud@v1
+          with:
+            project_id: sdypp2025
+            service_account_key: ${{ secrets.GOOGLE_CLOUD_CREDENTIALS }}
+            export_default_credentials: true
+    
+        - name: Configure kubectl
+          run: |
+            gcloud container clusters get-credentials cluster-integrador --zone us-east1-b
+    
+        # Despliegue de RabbitMQ en Kubernetes
+        - name: Deploy RabbitMQ to Kubernetes
+          run: |
+            kubectl apply -f TPFinal/blockchain/rabbit-deploy.yaml
+    
+        # Verificación de que RabbitMQ está corriendo y tiene IP pública
+        - name: Verify RabbitMQ Service
+          run: |
+            kubectl get services rabbitmq
