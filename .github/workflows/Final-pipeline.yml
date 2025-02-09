@@ -142,8 +142,8 @@ jobs:
    # Despliegue de RabbitMQ en Kubernetes
     - name: Deploy RabbitMQ to Kubernetes
       run: |
-            kubectl apply -f TPFinal/blockchain/rabbit-deploy.yaml
-    
+            kubectl apply -f TPFinal/blockchain/Infraestructura/k8s/rabbit-deploy.yaml
+   
   #  # Verificación de que RabbitMQ está corriendo y tiene IP pública
   #   - name: Verify RabbitMQ Service
   #     run: |
