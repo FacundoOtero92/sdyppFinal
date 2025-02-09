@@ -138,7 +138,13 @@ jobs:
               gcloud config set project sdypp2025
               gcloud config set compute/zone us-east1-c
               gcloud config set compute/region us-east1
-    
+   
+              
+    - name: Verificar existencia del archivo rabbit-deploy.yaml
+      run: |
+                echo "Listando el contenido del directorio TPFinal/blockchain/Infraestructura/k8s/"
+                ls -lah TPFinal/blockchain/Infraestructura/k8s/
+
    # Despliegue de RabbitMQ en Kubernetes
     - name: Deploy RabbitMQ to Kubernetes
       run: |
