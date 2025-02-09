@@ -138,34 +138,13 @@ jobs:
               gcloud config set project sdypp2025
               gcloud config set compute/zone us-east1-c
               gcloud config set compute/region us-east1
-    - name: Verificar estado del clúster antes de obtener credenciales
-      run: |
-                for i in {1..10}; do
-                  STATUS=$(gcloud container clusters describe cluster-integrador --zone us-east1-c --format='value(status)')
-                  echo "Estado actual del clúster: $STATUS"
-                  if [ "$STATUS" == "RUNNING" ]; then
-                    echo "El clúster está operativo. Continuando..."
-                    break
-                  else
-                    echo "El clúster aún no está listo. Esperando 30 segundos antes de volver a verificar..."
-                    sleep 90
-                  fi
-                  if [ "$i" -eq 10 ]; then
-                    echo "El clúster no está listo después de 5 minutos. Abortando."
-                    exit 1
-                  fi
-                done
-                  
-    - name: Configure kubectl
-      run: |
-            gcloud container clusters get-credentials cluster-integrador --zone us-east1-c
     
    # Despliegue de RabbitMQ en Kubernetes
     - name: Deploy RabbitMQ to Kubernetes
       run: |
             kubectl apply -f TPFinal/blockchain/rabbit-deploy.yaml
     
-   # Verificación de que RabbitMQ está corriendo y tiene IP pública
-    - name: Verify RabbitMQ Service
-      run: |
-            kubectl get services rabbitmq
+  #  # Verificación de que RabbitMQ está corriendo y tiene IP pública
+  #   - name: Verify RabbitMQ Service
+  #     run: |
+  #           kubectl get services rabbitmq
