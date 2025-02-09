@@ -1,7 +1,7 @@
 # https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/container_cluster
 resource "google_container_cluster" "cluster-integrador" {
   name                     = "cluster-integrador"
-  location                 = "us-east1-b"
+  location                 = "us-east1-c"
   remove_default_node_pool = true
   initial_node_count       = 1
   network                  = google_compute_network.main.self_link
