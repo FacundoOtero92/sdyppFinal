@@ -18,7 +18,7 @@ variable "credentials_file_path" {
 variable "project_id" {
 
   type    = string
-  default = "sdypp2025"
+  default = "sdyppfinal2025"
 
 }
 

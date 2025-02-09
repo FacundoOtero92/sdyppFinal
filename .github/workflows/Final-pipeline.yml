@@ -78,10 +78,10 @@ jobs:
               --backend-config "bucket=${BUCKET_NAME}" \
               --backend-config "prefix=${PREFIX}"
             
-            terraform import google_compute_network.main projects/sdypp2025/global/networks/main || true
-            terraform import google_compute_address.nat projects/sdypp2025/regions/us-east1/addresses/nat || true
-            terraform import google_compute_firewall.allow-ssh projects/sdypp2025/global/firewalls/allow-ssh || true
-            terraform import google_service_account.kubernetes projects/sdypp2025/serviceAccounts/kubernetes@sdypp2025.iam.gserviceaccount.com || true
+            terraform import google_compute_network.main projects/sdyppfinal2025/global/networks/main || true
+            terraform import google_compute_address.nat projects/sdyppfinal2025/regions/us-east1/addresses/nat || true
+            terraform import google_compute_firewall.allow-ssh projects/sdyppfinal2025/global/firewalls/allow-ssh || true
+            terraform import google_service_account.kubernetes projects/sdyppfinal2025/serviceAccounts/kubernetes@sdyppfinal2025.iam.gserviceaccount.com || true
            
             terraform validate
 
@@ -135,7 +135,7 @@ jobs:
 
     - name: Configurar el proyecto en Google Cloud
       run: |
-              gcloud config set project sdypp2025
+              gcloud config set project sdyppfinal2025
               gcloud config set compute/zone us-east1-c
               gcloud config set compute/region us-east1
    
