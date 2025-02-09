@@ -140,16 +140,11 @@ jobs:
               gcloud config set compute/region us-east1
    
               
-    - name: Verificar existencia del archivo rabbit-deploy.yaml
-      run: |
-                echo "Listando el contenido del directorio TPFinal/blockchain/Infraestructura/k8s/"
-                ls -lah TPFinal/blockchain/Infraestructura/k8s/
-
+  
    # Despliegue de RabbitMQ en Kubernetes
     - name: Deploy RabbitMQ to Kubernetes
       run: |
-            kubectl apply -f TPFinal/blockchain/Infraestructura/k8s/rabbit-deploy.yaml
-   
+            kubectl apply -f TPFinal/Infraestructura/k8s/rabbit-deploy.yaml
   #  # Verificación de que RabbitMQ está corriendo y tiene IP pública
   #   - name: Verify RabbitMQ Service
   #     run: |
