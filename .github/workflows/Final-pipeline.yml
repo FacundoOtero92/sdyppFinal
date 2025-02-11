@@ -149,3 +149,9 @@ jobs:
   #   - name: Verify RabbitMQ Service
   #     run: |
   #           kubectl get services rabbitmq
+
+
+    - name: Verificar estado de RabbitMQ
+      run: |
+        kubectl get pods
+        kubectl get services rabbitmq
