@@ -43,4 +43,4 @@ gcloud compute instances create vm ^
 
 #Ver log de la vm
 
-#cat /var/log/cloud-init-output.log
+#cat /var/log/cloud-init-output.lo
