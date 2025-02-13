@@ -141,16 +141,35 @@ jobs:
    
               
   
-   # Despliegue de RabbitMQ en Kubernetes
-    - name: Deploy RabbitMQ to Kubernetes
-      run: |
-            kubectl apply -f TPFinal/Infraestructura/k8s/rabbit-deploy.yaml
-  #  # Verificación de que RabbitMQ está corriendo y tiene IP pública
-  #   - name: Verify RabbitMQ Service
+  #  # Despliegue de RabbitMQ en Kubernetes
+  #   - name: Deploy RabbitMQ to Kubernetes
   #     run: |
-  #           kubectl get services rabbitmq
+  #           kubectl apply -f TPFinal/Infraestructura/k8s/rabbit-deploy.yaml
+  # #  # Verificación de que RabbitMQ está corriendo y tiene IP pública
+  # #   - name: Verify RabbitMQ Service
+  # #     run: |
+  # #           kubectl get services rabbitmq
+  #   - name: Verificar estado de RabbitMQ
+  #     run: |
+  #       kubectl get pods
+  #       kubectl get services rabbitmq
+    - name: Esperar a que Kubernetes esté listo
+      run: |
+          for i in {1..10}; do
+            kubectl get nodes && break
+            echo "Esperando que el clúster esté listo..."
+            sleep 10
+          done
+    - name: Obtener credenciales de GKE
+      run: |
+            gcloud container clusters get-credentials cluster-integrador --zone us-east1-c --project sdyppfinal2025
+            kubectl get nodes
+    
+    - name: Aplicar Deployment de RabbitMQ en Kubernetes
+      run: |
+            kubectl apply --validate=false -f TPFinal/Infraestructura/k8s/rabbit-deploy.yaml
     - name: Verificar estado de RabbitMQ
       run: |
-        kubectl get pods
-        kubectl get services rabbitmq
-        
+              kubectl get deployments
+              kubectl get pods
+              kubectl get services rabbitmq
