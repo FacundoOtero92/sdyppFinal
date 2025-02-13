@@ -153,6 +153,11 @@ jobs:
   #     run: |
   #       kubectl get pods
   #       kubectl get services rabbitmq
+    - name: Obtener credenciales de GKE
+      run: |
+        gcloud container clusters get-credentials cluster-integrador --zone us-east1-c --project sdyppfinal2025
+        kubectl get nodes
+
     - name: Verificar conexión con Kubernetes
       run: |
         kubectl cluster-info
@@ -165,11 +170,6 @@ jobs:
           echo "Esperando que el clúster esté listo..."
           sleep 10
         done
-
-    - name: Obtener credenciales de GKE
-      run: |
-        gcloud container clusters get-credentials cluster-integrador --zone us-east1-c --project sdyppfinal2025
-        kubectl get nodes
 
     - name: Aplicar Deployment de RabbitMQ en Kubernetes
       run: |
