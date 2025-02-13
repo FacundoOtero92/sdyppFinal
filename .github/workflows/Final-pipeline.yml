@@ -54,48 +54,29 @@ jobs:
       run: |
         echo '${{ secrets.GOOGLE_CREDENTIALS_MINERO }}' > credentials.json
     
-
-    - name: Autenticar en Google Cloud
-      run: |
+        - name: Autenticar en Google Cloud
+        run: |
           echo '${{ secrets.GOOGLE_CLOUD_CREDENTIALS }}' > ${{ github.workspace }}/gcloud-key.json
           gcloud auth activate-service-account --key-file=${{ github.workspace }}/gcloud-key.json
           gcloud config set project sdyppfinal2025
   
-
-
-
-
-    - name: Asignar permisos en GCP
+    - name: Instalar gke-gcloud-auth-plugin
       run: |
-          gcloud projects add-iam-policy-binding sdyppfinal2025 \
-            --member="serviceAccount:kubernetes@sdyppfinal2025.iam.gserviceaccount.com" \
-            --role="roles/owner"
+          gcloud components install gke-gcloud-auth-plugin
   
-          gcloud projects add-iam-policy-binding sdyppfinal2025 \
-            --member="serviceAccount:kubernetes@sdyppfinal2025.iam.gserviceaccount.com" \
-            --role="roles/editor"
-  
-          gcloud projects add-iam-policy-binding sdyppfinal2025 \
-            --member="serviceAccount:kubernetes@sdyppfinal2025.iam.gserviceaccount.com" \
-            --role="roles/compute.admin"
-  
-          gcloud projects add-iam-policy-binding sdyppfinal2025 \
-            --member="serviceAccount:kubernetes@sdyppfinal2025.iam.gserviceaccount.com" \
-            --role="roles/iam.serviceAccountAdmin"
-  
-          gcloud projects add-iam-policy-binding sdyppfinal2025 \
-            --member="serviceAccount:kubernetes@sdyppfinal2025.iam.gserviceaccount.com" \
-            --role="roles/iam.serviceAccountUser"
-  
-          gcloud projects add-iam-policy-binding sdyppfinal2025 \
-            --member="serviceAccount:kubernetes@sdyppfinal2025.iam.gserviceaccount.com" \
-            --role="roles/serviceusage.serviceUsageAdmin"
-  
-    - name: Verificar permisos de la cuenta de servicio
+    - name: Verificar instalación del plugin
       run: |
-          gcloud projects get-iam-policy sdyppfinal2025 --flatten="bindings[].members" --format="table(bindings.role)"
+          gcloud components list | grep gke-gcloud-auth-plugin || echo "Plugin no encontrado"
   
-
+    - name: Obtener credenciales de GKE
+      run: |
+          gcloud container clusters get-credentials cluster-integrador --zone us-east1-c --project sdyppfinal2025
+          kubectl get nodes
+  
+    - name: Aplicar Deployment de RabbitMQ en Kubernetes
+      run: |
+          kubectl apply --validate=false -f TPFinal/Infraestructura/k8s/rabbit-deploy.yaml
+  
 
 
 
