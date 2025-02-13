@@ -153,27 +153,34 @@ jobs:
   #     run: |
   #       kubectl get pods
   #       kubectl get services rabbitmq
-    - name: Obtener credenciales de GKE
+    - name: Obtener credenciales de GKE y verificar acceso
       run: |
         gcloud container clusters get-credentials cluster-integrador --zone us-east1-c --project sdyppfinal2025
-        kubectl get nodes
-
-    - name: Verificar conexión con Kubernetes
-      run: |
-        kubectl cluster-info
-        kubectl get nodes || echo "No se encontraron nodos, esperando..."
-
-    - name: Esperar a que Kubernetes esté listo
-      run: |
         for i in {1..10}; do
           kubectl get nodes && break
-          echo "Esperando que el clúster esté listo..."
+          echo "Esperando que los nodos estén disponibles..."
+          sleep 10
+        done
+
+    - name: Verificar conexión con Kubernetes y nodos
+      run: |
+        for i in {1..10}; do
+          kubectl cluster-info && kubectl get nodes && break
+          echo "Esperando que Kubernetes esté disponible..."
           sleep 10
         done
 
     - name: Aplicar Deployment de RabbitMQ en Kubernetes
       run: |
         kubectl apply --validate=false -f TPFinal/Infraestructura/k8s/rabbit-deploy.yaml
+
+    - name: Esperar a que los pods de RabbitMQ se inicien
+      run: |
+        for i in {1..10}; do
+          kubectl get pods | grep "rabbitmq" && break
+          echo "Esperando que los pods de RabbitMQ se inicien..."
+          sleep 10
+        done
 
     - name: Verificar estado de RabbitMQ
       run: |
