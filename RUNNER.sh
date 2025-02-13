@@ -42,4 +42,5 @@ gcloud compute instances create vm ^
 #gcloud compute instances delete vm --zone=us-east1-b
 
 #Ver log de la vm
+
 #cat /var/log/cloud-init-output.log
