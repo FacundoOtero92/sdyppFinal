@@ -54,6 +54,46 @@ jobs:
       run: |
         echo '${{ secrets.GOOGLE_CREDENTIALS_MINERO }}' > credentials.json
     
+
+
+
+
+
+
+    - name: Asignar permisos en GCP
+      run: |
+          gcloud projects add-iam-policy-binding sdyppfinal2025 \
+            --member="serviceAccount:kubernetes@sdyppfinal2025.iam.gserviceaccount.com" \
+            --role="roles/owner"
+  
+          gcloud projects add-iam-policy-binding sdyppfinal2025 \
+            --member="serviceAccount:kubernetes@sdyppfinal2025.iam.gserviceaccount.com" \
+            --role="roles/editor"
+  
+          gcloud projects add-iam-policy-binding sdyppfinal2025 \
+            --member="serviceAccount:kubernetes@sdyppfinal2025.iam.gserviceaccount.com" \
+            --role="roles/compute.admin"
+  
+          gcloud projects add-iam-policy-binding sdyppfinal2025 \
+            --member="serviceAccount:kubernetes@sdyppfinal2025.iam.gserviceaccount.com" \
+            --role="roles/iam.serviceAccountAdmin"
+  
+          gcloud projects add-iam-policy-binding sdyppfinal2025 \
+            --member="serviceAccount:kubernetes@sdyppfinal2025.iam.gserviceaccount.com" \
+            --role="roles/iam.serviceAccountUser"
+  
+          gcloud projects add-iam-policy-binding sdyppfinal2025 \
+            --member="serviceAccount:kubernetes@sdyppfinal2025.iam.gserviceaccount.com" \
+            --role="roles/serviceusage.serviceUsageAdmin"
+  
+    - name: Verificar permisos de la cuenta de servicio
+      run: |
+          gcloud projects get-iam-policy sdyppfinal2025 --flatten="bindings[].members" --format="table(bindings.role)"
+  
+
+
+
+
         
 
 
@@ -153,6 +193,11 @@ jobs:
   #     run: |
   #       kubectl get pods
   #       kubectl get services rabbitmq
+    
+    - name: Instalar gke-gcloud-auth-plugin
+      run: |
+        sudo apt-get update && sudo apt-get install -y google-cloud-sdk-gke-gcloud-auth-plugin
+
     - name: Obtener credenciales de GKE y verificar acceso
       run: |
         gcloud container clusters get-credentials cluster-integrador --zone us-east1-c --project sdyppfinal2025
