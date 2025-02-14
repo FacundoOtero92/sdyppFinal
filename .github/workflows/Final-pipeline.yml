@@ -154,18 +154,14 @@ jobs:
     
     - name: Instalar gke-gcloud-auth-plugin
       run: |
-          gcloud components install gke-gcloud-auth-plugin
-
-    - name: Verificar instalación del plugin
-      run: |
-          gcloud components list | grep gke-gcloud-auth-plugin || echo "Plugin no encontrado"
+        sudo apt-get update && sudo apt-get install -y google-cloud-cli-gke-gcloud-auth-plugin
 
     - name: Obtener credenciales de GKE
       run: |
-          gcloud container clusters get-credentials cluster-integrador --zone us-east1-c --project sdyppfinal2025
-          kubectl get nodes
+        gcloud container clusters get-credentials cluster-integrador --zone us-east1-c --project sdyppfinal2025
+        kubectl get nodes
 
     - name: Aplicar Deployment de RabbitMQ en Kubernetes
       run: |
-          kubectl apply --validate=false -f TPFinal/Infraestructura/k8s/rabbit-deploy.yaml
+        kubectl apply --validate=false -f TPFinal/Infraestructura/k8s/rabbit-deploy.yaml
 
