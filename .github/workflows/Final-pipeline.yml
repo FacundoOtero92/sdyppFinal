@@ -47,35 +47,6 @@ jobs:
         echo '${{ secrets.GOOGLE_CREDENTIALS_COORDINADOR }}' > credentials.json
    
 
-    - name: Authenticate with Google Cloud (Minero)
-     
-      env:
-         GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS_MINERO }}
-      run: |
-        echo '${{ secrets.GOOGLE_CREDENTIALS_MINERO }}' > credentials.json
-    
-        - name: Autenticar en Google Cloud
-        run: |
-          echo '${{ secrets.GOOGLE_CLOUD_CREDENTIALS }}' > ${{ github.workspace }}/gcloud-key.json
-          gcloud auth activate-service-account --key-file=${{ github.workspace }}/gcloud-key.json
-          gcloud config set project sdyppfinal2025
-  
-    - name: Instalar gke-gcloud-auth-plugin
-      run: |
-          gcloud components install gke-gcloud-auth-plugin
-  
-    - name: Verificar instalación del plugin
-      run: |
-          gcloud components list | grep gke-gcloud-auth-plugin || echo "Plugin no encontrado"
-  
-    - name: Obtener credenciales de GKE
-      run: |
-          gcloud container clusters get-credentials cluster-integrador --zone us-east1-c --project sdyppfinal2025
-          kubectl get nodes
-  
-    - name: Aplicar Deployment de RabbitMQ en Kubernetes
-      run: |
-          kubectl apply --validate=false -f TPFinal/Infraestructura/k8s/rabbit-deploy.yaml
   
 
 
@@ -180,41 +151,21 @@ jobs:
   #       kubectl get pods
   #       kubectl get services rabbitmq
     
+    
     - name: Instalar gke-gcloud-auth-plugin
       run: |
-        sudo apt-get update && sudo apt-get install -y google-cloud-sdk-gke-gcloud-auth-plugin
+          gcloud components install gke-gcloud-auth-plugin
 
-    - name: Obtener credenciales de GKE y verificar acceso
+    - name: Verificar instalación del plugin
       run: |
-        gcloud container clusters get-credentials cluster-integrador --zone us-east1-c --project sdyppfinal2025
-        for i in {1..10}; do
-          kubectl get nodes && break
-          echo "Esperando que los nodos estén disponibles..."
-          sleep 10
-        done
+          gcloud components list | grep gke-gcloud-auth-plugin || echo "Plugin no encontrado"
 
-    - name: Verificar conexión con Kubernetes y nodos
+    - name: Obtener credenciales de GKE
       run: |
-        for i in {1..10}; do
-          kubectl cluster-info && kubectl get nodes && break
-          echo "Esperando que Kubernetes esté disponible..."
-          sleep 10
-        done
+          gcloud container clusters get-credentials cluster-integrador --zone us-east1-c --project sdyppfinal2025
+          kubectl get nodes
 
     - name: Aplicar Deployment de RabbitMQ en Kubernetes
       run: |
-        kubectl apply --validate=false -f TPFinal/Infraestructura/k8s/rabbit-deploy.yaml
+          kubectl apply --validate=false -f TPFinal/Infraestructura/k8s/rabbit-deploy.yaml
 
-    - name: Esperar a que los pods de RabbitMQ se inicien
-      run: |
-        for i in {1..10}; do
-          kubectl get pods | grep "rabbitmq" && break
-          echo "Esperando que los pods de RabbitMQ se inicien..."
-          sleep 10
-        done
-
-    - name: Verificar estado de RabbitMQ
-      run: |
-        kubectl get deployments
-        kubectl get pods
-        kubectl get services rabbitmq
