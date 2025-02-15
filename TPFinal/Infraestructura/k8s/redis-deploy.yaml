@@ -16,12 +16,13 @@ spec:
       - name: redis
         image: redis:latest
         resources:
-          requests:
-            memory: "256Mi"
-            cpu: "500m"
-          limits:
-            memory: "512Mi"
-            cpu: "1000m"
+        requests:
+          memory: "128Mi"  # Reducido de 256Mi a 128Mi
+          cpu: "250m"      # Reducido de 500m a 250m
+        limits:
+          memory: "256Mi"  # Reducido de 512Mi a 256Mi
+          cpu: "500m"      # Reducido de 1 CPU a 500m
+
         ports:
         - containerPort: 6379
 ---
