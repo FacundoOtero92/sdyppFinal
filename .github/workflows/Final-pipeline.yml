@@ -59,6 +59,20 @@ jobs:
     - name: Terraform setup
       uses: hashicorp/setup-terraform@v3
     
+    - name: Verificar y crear bucket en GCS si no existe
+      run: |
+          BUCKET_NAME="bucket_integrador"
+          PROJECT_ID="sdyppfinal2025"
+          REGION="us-east1"
+
+          if ! gsutil ls -b gs://$BUCKET_NAME 2>/dev/null; then
+            echo "El bucket no existe, creando..."
+            gsutil mb -p $PROJECT_ID -c STANDARD -l $REGION gs://$BUCKET_NAME
+          else
+            echo "El bucket ya existe."
+          fi
+
+
     - name: Terraform init
       working-directory: "TPFinal/Infraestructura/terraform servicios"
       env:
@@ -68,7 +82,7 @@ jobs:
     
           ls -lah
 
-            BUCKET_NAME="terraform_state_cloud"
+            BUCKET_NAME="bucket_integrador"
             PREFIX="cluster/state"
 
             terraform init --reconfigure \
