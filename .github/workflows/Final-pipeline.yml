@@ -75,7 +75,7 @@ jobs:
     
     - name: Verificar y crear bucket en GCS si no existe
       run: |
-          BUCKET_NAME="bucket_integrador"
+          BUCKET_NAME="bucket_integrador_final2025"
           PROJECT_ID="sdyppfinal2025"
           REGION="us-east1"
 
@@ -96,7 +96,7 @@ jobs:
     
           ls -lah
 
-            BUCKET_NAME="bucket_integrador"
+            BUCKET_NAME="bucket_integrador_final2025"
             PREFIX="cluster/state"
 
             terraform init --reconfigure \
