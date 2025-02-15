@@ -170,3 +170,12 @@ jobs:
       run: |
           kubectl apply --validate=false -f TPFinal/Infraestructura/k8s/rabbit-deploy.yaml
 
+    - name: Aplicar Deployment de Redis en Kubernetes
+      run: |
+              kubectl apply --validate=false -f TPFinal/Infraestructura/k8s/redis-deploy.yaml
+    
+    - name: Verificar estado de Redis
+      run: |
+              kubectl get pods
+              kubectl get services redis-service
+    
