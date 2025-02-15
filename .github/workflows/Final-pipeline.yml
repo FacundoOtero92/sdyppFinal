@@ -197,6 +197,11 @@ jobs:
               kubectl get pods
               kubectl get services redis-service
     
+    
+    - name: Aplicar Deployment del Coordinador en Kubernetes
+      run: |
+                  kubectl apply --validate=false -f TPFinal/Infraestructura/k8s/coordinador-deploy.yaml
+        
 
     - name: Obtener IP pública del Coordinador
       run: |
