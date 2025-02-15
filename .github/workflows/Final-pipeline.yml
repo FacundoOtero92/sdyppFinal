@@ -195,7 +195,7 @@ jobs:
     - name: Verificar estado de Redis
       run: |
               kubectl get pods
-              kubectl get services redis-service
+              kubectl get services redis-integrador
     
     
     - name: Aplicar Deployment del Coordinador en Kubernetes
