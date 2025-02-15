@@ -21,6 +21,20 @@ jobs:
       with:
         python-version: '3.x'
 
+
+
+    - name: Authenticate with Google Cloud
+      run: |
+              echo '${{ secrets.GOOGLE_CLOUD_CREDENTIALS }}' > ${{ github.workspace }}/gcloud-key.json
+              gcloud auth activate-service-account --key-file=${{ github.workspace }}/gcloud-key.json
+  
+    - name: Configurar el proyecto en Google Cloud
+      run: |
+                gcloud config set project sdyppfinal2025
+                gcloud config set compute/zone us-east1-c
+                gcloud config set compute/region us-east1
+         
+
     - name: Install dependencies (Coordinador)
       run: |
         python -m pip install --upgrade pip
@@ -139,16 +153,6 @@ jobs:
     #     gcloud config set project sdypp2025
     #     gcloud config set compute/zone us-east1-c
     #     gcloud config set compute/region us-east1
-    - name: Authenticate with Google Cloud
-      run: |
-            echo '${{ secrets.GOOGLE_CLOUD_CREDENTIALS }}' > ${{ github.workspace }}/gcloud-key.json
-            gcloud auth activate-service-account --key-file=${{ github.workspace }}/gcloud-key.json
-
-    - name: Configurar el proyecto en Google Cloud
-      run: |
-              gcloud config set project sdyppfinal2025
-              gcloud config set compute/zone us-east1-c
-              gcloud config set compute/region us-east1
    
               
   
