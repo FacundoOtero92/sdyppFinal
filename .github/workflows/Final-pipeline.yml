@@ -197,3 +197,18 @@ jobs:
               kubectl get pods
               kubectl get services redis-service
     
+
+    - name: Obtener IP pública del Coordinador
+      run: |
+                  echo "Esperando a que se asigne la IP pública al Coordinador..."
+                  for i in {1..10}; do
+                      IP=$(kubectl get service coordinador-integrador -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+                      if [[ -n "$IP" ]]; then
+                          echo "IP pública del Coordinador: $IP"
+                          echo "COORDINADOR_IP=$IP" >> $GITHUB_ENV
+                          break
+                      fi
+                      echo " Aún no se asignó la IP, reintentando en 10 segundos..."
+                      sleep 10
+                  done
+                   
