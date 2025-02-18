@@ -34,33 +34,50 @@ jobs:
                 gcloud config set compute/zone us-east1-c
                 gcloud config set compute/region us-east1
 
+    - name: Instalar gke-gcloud-auth-plugin manualmente
+      run: |
+                    echo "🔹 Instalando gke-gcloud-auth-plugin..."
+                    export CLOUD_SDK_REPO="cloud-sdk"
+                    echo "deb http://packages.cloud.google.com/apt $CLOUD_SDK_REPO main" | sudo tee -a /etc/apt/sources.list.d/google-cloud-sdk.list
+                    curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
+                    sudo apt-get update && sudo apt-get install -y google-cloud-sdk-gke-gcloud-auth-plugin
+                    echo "✅ Plugin instalado correctamente."
+          
+         
     - name: Configurar kubectl con credenciales de GKE
       run: |
-          echo "🔹 Obteniendo credenciales del clúster de GKE..."
-          gcloud container clusters get-credentials cluster-integrador --zone us-east1-c --project sdyppfinal2025
-          kubectl config current-context
-
-         
+                        echo "🔹 Obteniendo credenciales del clúster de GKE..."
+                        gcloud container clusters get-credentials cluster-integrador --zone us-east1-c --project sdyppfinal2025
+                        kubectl config current-context
+              
+      
     - name: Asignar permisos al Coordinador en el bucket
       run: |
-              echo "🔹 Obteniendo la cuenta de servicio del Coordinador..."
-              COORDINADOR_SA=$(kubectl get serviceaccount coordinador -o jsonpath='{.secrets[0].name}' || echo "")
-    
-              if [[ -z "$COORDINADOR_SA" ]]; then
-                  echo "⚠️  No se encontró una cuenta de servicio personalizada, usando la cuenta predeterminada."
-                  COORDINADOR_SA="sdyppfinal2025-compute@developer.gserviceaccount.com"
-              else
-                  COORDINADOR_SA="coordinador@sdyppfinal2025.iam.gserviceaccount.com"
-              fi
-    
-              echo "🛠️ Asignando permisos de storage.objectAdmin a $COORDINADOR_SA..."
-              gcloud storage buckets add-iam-policy-binding bucket_integrador_final2025 \
-                --member="serviceAccount:$COORDINADOR_SA" \
-                --role="roles/storage.objectAdmin"
-    
-              echo "✅ Permisos asignados correctamente a $COORDINADOR_SA."
-    
-          
+          echo "🔹 Obteniendo la cuenta de servicio del Coordinador..."
+          COORDINADOR_SA=$(kubectl get serviceaccount coordinador -o jsonpath='{.secrets[0].name}' || echo "")
+
+          if [[ -z "$COORDINADOR_SA" ]]; then
+              echo "⚠️  No se encontró una cuenta de servicio personalizada, usando la cuenta predeterminada."
+              COORDINADOR_SA="sdyppfinal2025-compute@developer.gserviceaccount.com"
+          else
+              COORDINADOR_SA="coordinador@sdyppfinal2025.iam.gserviceaccount.com"
+          fi
+
+          echo "🛠️ Asignando permisos de storage.objectAdmin a $COORDINADOR_SA..."
+          gcloud storage buckets add-iam-policy-binding gs://bucket_integrador_final2025 \
+            --member="serviceAccount:$COORDINADOR_SA" \
+            --role="roles/storage.objectAdmin"
+
+          echo "✅ Permisos asignados correctamente a $COORDINADOR_SA."
+
+
+
+
+
+
+
+
+
 
     - name: Install dependencies (Coordinador)
       run: |
