@@ -38,8 +38,9 @@ jobs:
       run: |
                     echo "Asignando permisos de storage.objectAdmin a la cuenta de servicio..."
                     gcloud storage buckets add-iam-policy-binding bucket_integrador_final2025 \
-                      --member=serviceAccount:kubernetes@sdyppfinal2025.iam.gserviceaccount.com \
-                      --role=roles/storage.objectAdmin
+                      --member="serviceAccount:kubernetes@sdyppfinal2025.iam.gserviceaccount.com" \
+                      --role="roles/storage.objectAdmin"
+          
           
 
     - name: Install dependencies (Coordinador)
