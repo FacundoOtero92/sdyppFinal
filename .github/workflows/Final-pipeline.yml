@@ -34,12 +34,24 @@ jobs:
                 gcloud config set compute/zone us-east1-c
                 gcloud config set compute/region us-east1
          
-    - name: Asignar permisos a la cuenta de servicio en el bucket
+    - name: Asignar permisos al Coordinador en el bucket
       run: |
-                    echo "Asignando permisos de storage.objectAdmin a la cuenta de servicio..."
-                    gcloud storage buckets add-iam-policy-binding gs://bucket_integrador_final2025 \
-                      --member="serviceAccount:kubernetes@sdyppfinal2025.iam.gserviceaccount.com" \
+                    echo "Obteniendo la cuenta de servicio del Coordinador..."
+                    COORDINADOR_SA=$(kubectl get serviceaccount coordinador -o jsonpath='{.secrets[0].name}' || echo "")
+          
+                    if [[ -z "$COORDINADOR_SA" ]]; then
+                        echo "⚠️  No se encontró una cuenta de servicio personalizada, usando la cuenta predeterminada."
+                        COORDINADOR_SA="sdyppfinal2025-compute@developer.gserviceaccount.com"
+                    else
+                        COORDINADOR_SA="coordinador@sdyppfinal2025.iam.gserviceaccount.com"
+                    fi
+          
+                    echo "🛠️ Asignando permisos de storage.objectAdmin a $COORDINADOR_SA..."
+                    gcloud storage buckets add-iam-policy-binding bucket_integrador_final2025 \
+                      --member="serviceAccount:$COORDINADOR_SA" \
                       --role="roles/storage.objectAdmin"
+          
+                    echo "✅ Permisos asignados correctamente a $COORDINADOR_SA."
           
           
 
