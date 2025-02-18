@@ -14,12 +14,12 @@ spec:
       labels:
         app: coordinador
     spec:
+      serviceAccountName: coordinador-sa  # <-- Añadir aquí
       containers:
         - name: coordinador
           image: facundootero/coordinador
           ports:
             - containerPort: 5000
-
 ---
 apiVersion: v1
 kind: Service
