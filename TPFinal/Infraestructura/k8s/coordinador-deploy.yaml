@@ -14,20 +14,54 @@ spec:
       labels:
         app: coordinador
     spec:
-      serviceAccountName: coordinador-sa  # <-- Añadir aquí
       containers:
         - name: coordinador
-          image: facundootero/coordinador
+          image: facundootero/coordinador:latest
           ports:
             - containerPort: 5000
+          env:
+            - name: BUCKET_NAME
+              value: "bucket_integrador_final2025"  # ✅ Nombre correcto del bucket
+            - name: GOOGLE_APPLICATION_CREDENTIALS
+              value: "/etc/gcloud/credentials.json"  # ✅ Ruta del archivo de credenciales
+          volumeMounts:
+            - name: gcloud-credentials
+              mountPath: /etc/gcloud
+              readOnly: true
+          resources:   # ✅ Limites de CPU y memoria
+            requests:
+              memory: "256Mi"
+              cpu: "250m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+          livenessProbe:  # ✅ Verifica si está vivo, si falla lo reinicia
+            httpGet:
+              path: /status
+              port: 5000
+            initialDelaySeconds: 10
+            periodSeconds: 15
+          readinessProbe:  # ✅ Verifica si está listo para recibir tráfico
+            httpGet:
+              path: /status
+              port: 5000
+            initialDelaySeconds: 5
+            periodSeconds: 10
+      volumes:
+        - name: gcloud-credentials
+          secret:
+            secretName: gcloud-credentials  # Asegúrate de que este secreto existe en Kubernetes
+
 ---
 apiVersion: v1
 kind: Service
 metadata:
   name: coordinador-integrador
 spec:
-  ports:
-    - port: 5000
+  type: LoadBalancer
   selector:
     app: coordinador
-  type: LoadBalancer
+  ports:
+    - protocol: TCP
+      port: 5000
+      targetPort: 5000
