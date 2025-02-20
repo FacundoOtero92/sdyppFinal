@@ -172,9 +172,11 @@ jobs:
    
 
 
-    - name: Build Docker Images (Coordinador)
+    - name: Build and Push Docker Image (Coordinador)
       run: |
-        docker build -f TPFinal/blockchain/Coordinador/dockerfile.dockerfile -t coordinador-app TPFinal/blockchain/Coordinador
+            docker build -t facundootero/coordinador:latest TPFinal/blockchain/Coordinador
+            docker push facundootero/coordinador:latest
+
 
 
     - name: Build Docker Images (Minero)

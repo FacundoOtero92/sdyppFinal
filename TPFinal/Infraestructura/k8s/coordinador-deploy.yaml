@@ -16,7 +16,8 @@ spec:
     spec:
       containers:
         - name: coordinador
-          image: facundootero/coordinador:latest
+          image: facundootero/coordinador:latest  # Usar la última versión
+          imagePullPolicy: Always  # Siempre descargar la última versión
           ports:
             - containerPort: 5000
                      
