@@ -51,24 +51,22 @@ jobs:
                         kubectl config current-context
               
       
-    - name: Asignar permisos al Coordinador en el bucket
+    - name: Asignar permisos a la cuenta predeterminada de Compute Engine
       run: |
-                            DEFAULT_K8S_SA="kubernetes@sdyppfinal2025.iam.gserviceaccount.com"
-                  
-                            echo "🛠️ Asignando permisos de storage.objectAdmin a $DEFAULT_K8S_SA..."
+                            COMPUTE_SA="105059060773-compute@developer.gserviceaccount.com"
+                            
+                            echo "🛠️ Asignando permisos de storage.objectAdmin a $COMPUTE_SA..."
                             gcloud storage buckets add-iam-policy-binding gs://bucket_integrador_final2025 \
-                              --member="serviceAccount:$DEFAULT_K8S_SA" \
+                              --member="serviceAccount:$COMPUTE_SA" \
                               --role="roles/storage.objectAdmin"
                   
+                            echo "🛠️ Asignando permisos de storage.admin a $COMPUTE_SA..."
                             gcloud projects add-iam-policy-binding sdyppfinal2025 \
-                              --member="serviceAccount:$DEFAULT_K8S_SA" \
-                              --role="roles/iam.serviceAccountUser"
-                  
-                            gcloud projects add-iam-policy-binding sdyppfinal2025 \
-                              --member="serviceAccount:$DEFAULT_K8S_SA" \
+                              --member="serviceAccount:$COMPUTE_SA" \
                               --role="roles/storage.admin"
                   
-                            echo "✅ Permisos asignados correctamente a $DEFAULT_K8S_SA."
+                            echo "✅ Permisos asignados correctamente a $COMPUTE_SA."
+                  
                   
 
 
