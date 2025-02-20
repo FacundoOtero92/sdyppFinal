@@ -14,6 +14,7 @@ spec:
       labels:
         app: coordinador
     spec:
+      serviceAccountName: default 
       containers:
         - name: coordinador
           image: facundootero/coordinador:latest  # Usar la última versión
