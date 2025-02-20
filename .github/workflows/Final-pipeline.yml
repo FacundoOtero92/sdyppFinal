@@ -243,9 +243,11 @@ jobs:
               kubectl get services redis-integrador
     
     
-    - name: Aplicar Deployment del Coordinador en Kubernetes
+    - name: Apply Kubernetes Deployment (Coordinador)
       run: |
-                  kubectl apply --validate=false -f TPFinal/Infraestructura/k8s/coordinador-deploy.yaml
+                kubectl apply -f TPFinal/Infraestructura/k8s/coordinador-deploy.yaml
+                kubectl rollout restart deployment coordinador  # Reiniciar el despliegue para tomar la nueva imagen
+            
         
 
     - name: Obtener IP pública del Coordinador
