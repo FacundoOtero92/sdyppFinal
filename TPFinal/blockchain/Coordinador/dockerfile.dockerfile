@@ -5,6 +5,7 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 # Establecer el directorio de trabajo en el contenedor
 WORKDIR /app
+COPY credentials.json /app/credentials.json
 
 # Copiar solo el requirements.txt primero (para cacheo eficiente)
 COPY requirements.txt .
