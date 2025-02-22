@@ -58,7 +58,7 @@ def queueConnect():
     return connection, channel
 
 def bucketConnect(bucketName, credentialPath):
-    print(f"[DEBUG] Conectando al bucket1: {bucketName}") 
+    print(f"[DEBUG] Conectando al bucket2: {bucketName}") 
     bucketClient = storage.Client.from_service_account_json(credentialPath)
     bucket = bucketClient.bucket(bucketName)
     return bucket
@@ -109,7 +109,7 @@ def existBlock(id):
     
 def postBlock(block):
     if client is None:
-        print("[ERROR] No hay conexión a Redis. No se guardará el bloque.")
+        print("[ERROR] No hay conexión a Redis. No se guardará el bloque.", flush=True)
         return
 
     blockJson = json.dumps(block)
@@ -117,7 +117,8 @@ def postBlock(block):
 
     # Verificar si el bloque fue guardado en Redis
     saved_block = client.lrange('blockchain', 0, -1)
-    print(f"[DEBUG] Bloques en Redis después de guardar: {saved_block}")
+    print(f"[DEBUG] Bloques en Redis después de guardar: {saved_block}", flush=True)
+
 
 
 # --- TERMINAN METODOS REDIS --- #
