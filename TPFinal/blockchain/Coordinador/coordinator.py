@@ -265,7 +265,7 @@ def receive_solved_task():
             newBlock['baseStringChain'] = block['baseStringChain']
             newBlock['timestamp'] = timestamp
             newBlock['nonce'] = data['result']
-
+            print(f"[DEBUG] paso por aca")
             postBlock(newBlock)
             print('[x] Bloque validado » Agregado a la blockchain')
 
