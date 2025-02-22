@@ -167,13 +167,16 @@ jobs:
     #   if: github.ref == 'refs/heads/main'
     #   working-directory: "TPFinal/Infraestructura/terraform servicios"
     #   run: terraform apply -auto-approve
+    - name: Crear credentials.json desde GitHub Secrets
+      run: |
+            echo '${{ secrets.GOOGLE_CLOUD_CREDENTIALS }}' > credentials.json
+
     - name: Crear Secret con credentials.json en Kubernetes
       run: |
-              echo "${{ secrets.GOOGLE_CLOUD_CREDENTIALS }}" | base64 --decode > credentials.json
               kubectl delete secret gcp-credentials --ignore-not-found
               kubectl create secret generic gcp-credentials --from-file=credentials.json
               rm credentials.json
-          
+               
 
     - name: Build and Push Docker Image (Coordinador)
       run: |
