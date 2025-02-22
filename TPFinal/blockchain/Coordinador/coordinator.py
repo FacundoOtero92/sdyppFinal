@@ -59,7 +59,7 @@ def queueConnect():
     return connection, channel
 
 def bucketConnect(bucketName, credentialPath):
-    print(f"[DEBUG] Conectando al bucket: {bucketName}") 
+    print(f"[DEBUG] Conectando al bucket1: {bucketName}") 
     bucketClient = storage.Client.from_service_account_json(credentialPath)
     bucket = bucketClient.bucket(bucketName)
     return bucket
