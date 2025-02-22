@@ -2,8 +2,6 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: coordinador
-  labels:
-    app: coordinador
 spec:
   replicas: 1
   selector:
@@ -14,27 +12,24 @@ spec:
       labels:
         app: coordinador
     spec:
-      serviceAccountName: default 
       containers:
-        - name: coordinador
-          image: facundootero/coordinador:latest  # Usar la última versión
-          imagePullPolicy: Always  # Siempre descargar la última versión
-          ports:
-            - containerPort: 5000
-                     
+      - name: coordinador
+        image: facundootero/coordinador:latest  # 🔹 Se actualizará automáticamente
+        ports:
+        - containerPort: 5000                     
           resources:   # ✅ Limites de CPU y memoria
-            requests:
+           requests:
               memory: "256Mi"
               cpu: "250m"
-            limits:
+           limits:
               memory: "512Mi"
               cpu: "500m"
-          livenessProbe:  # ✅ Verifica si está vivo, si falla lo reinicia
-            httpGet:
+           livenessProbe:  # ✅ Verifica si está vivo, si falla lo reinicia
+           httpGet:
               path: /status
               port: 5000
-            initialDelaySeconds: 10
-            periodSeconds: 15
+           initialDelaySeconds: 10
+           periodSeconds: 15
           readinessProbe:  # ✅ Verifica si está listo para recibir tráfico
             httpGet:
               path: /status
