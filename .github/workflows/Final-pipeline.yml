@@ -167,7 +167,13 @@ jobs:
     #   if: github.ref == 'refs/heads/main'
     #   working-directory: "TPFinal/Infraestructura/terraform servicios"
     #   run: terraform apply -auto-approve
-   
+    - name: Crear Secret con credentials.json en Kubernetes
+      run: |
+              echo "${{ secrets.GOOGLE_CLOUD_CREDENTIALS }}" | base64 --decode > credentials.json
+              kubectl delete secret gcp-credentials --ignore-not-found
+              kubectl create secret generic gcp-credentials --from-file=credentials.json
+              rm credentials.json
+          
 
     - name: Build and Push Docker Image (Coordinador)
       run: |
@@ -184,39 +190,7 @@ jobs:
     - name: Build Docker Images (Minero)
       run: |
           docker build -f TPFinal/blockchain/Minero/worker_cpu.dockerfile -t worker-cpu-app TPFinal/blockchain/Minero
-    # docker build -f TPFinal/blockchain/Minero/worker_gpu.dockerfile -t worker-gpu-app TPFinal/blockchain/Minero
-      
-    # - name: Authenticate with Google Cloud
-    #   env:
-    #         GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CLOUD_CREDENTIALS }}
-    #   run: |
-    #         echo '${{ secrets.GOOGLE_CLOUD_CREDENTIALS }}' > credentials.json
-    
-    # Configuración de kubectl para interactuar con el clúster de GKE
-    # - name: Authenticate with Google Cloud
-    #   run: |
-    #     echo "${{ secrets.GOOGLE_CLOUD_CREDENTIALS }}" > ${{ github.workspace }}/gcloud-key.json
-    #     gcloud auth activate-service-account --key-file=${{ github.workspace }}/gcloud-key.json
-    #     gcloud config set project sdypp2025
-    #     gcloud config set compute/zone us-east1-c
-    #     gcloud config set compute/region us-east1
    
-              
-  
-  #  # Despliegue de RabbitMQ en Kubernetes
-  #   - name: Deploy RabbitMQ to Kubernetes
-  #     run: |
-  #           kubectl apply -f TPFinal/Infraestructura/k8s/rabbit-deploy.yaml
-  # #  # Verificación de que RabbitMQ está corriendo y tiene IP pública
-  # #   - name: Verify RabbitMQ Service
-  # #     run: |
-  # #           kubectl get services rabbitmq
-  #   - name: Verificar estado de RabbitMQ
-  #     run: |
-  #       kubectl get pods
-  #       kubectl get services rabbitmq
-    
-    
   
     - name: Instalar gke-gcloud-auth-plugin manualmente
       run: |

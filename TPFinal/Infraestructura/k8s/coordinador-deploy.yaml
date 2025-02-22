@@ -18,8 +18,9 @@ spec:
         image: facundootero/coordinador:latest  # ✅ Se actualizará automáticamente
         ports:
         - containerPort: 5000
-        
-        resources:   # ✅ Limites de CPU y memoria (se movió correctamente)
+
+        # ✅ Se movió correctamente dentro de `containers`
+        resources:
           requests:
             memory: "256Mi"
             cpu: "250m"
@@ -40,6 +41,16 @@ spec:
             port: 5000
           initialDelaySeconds: 5
           periodSeconds: 10
+
+        volumeMounts:
+        - name: gcp-credentials
+          mountPath: "/app/credentials.json"
+          subPath: "credentials.json"
+
+      volumes:
+      - name: gcp-credentials
+        secret:
+          secretName: gcp-credentials  # ✅ Asegurar que esté bien indentado y sin errores
 
 ---
 apiVersion: v1
