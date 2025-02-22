@@ -26,9 +26,20 @@ credentialPath = 'credentials.json'
 # Conexion a Redis
 
 def redisConnect():
-    client = redis.Redis(host = hostRedis, port = portRedis, db = 0)
-    print('[x] Conectado a Redis')
-    return client
+    try:
+        print(f"[DEBUG] Intentando conectar a Redis en {hostRedis}:{portRedis}")
+        client = redis.Redis(host=hostRedis, port=portRedis, db=0, decode_responses=True)
+
+        # Verificar si Redis responde
+        if client.ping():
+            print("[x] Conectado a Redis con éxito")
+        return client
+    except Exception as e:
+        print(f"[ERROR] No se pudo conectar a Redis: {e}")
+        return None
+
+client = redisConnect()
+
 
 # Conexion a Rabbit-MQ para encolar Transacciones
 
@@ -98,8 +109,17 @@ def existBlock(id):
             return False
     
 def postBlock(block):
+    if client is None:
+        print("[ERROR] No hay conexión a Redis. No se guardará el bloque.")
+        return
+
     blockJson = json.dumps(block)
     client.lpush('blockchain', blockJson)
+
+    # Verificar si el bloque fue guardado en Redis
+    saved_block = client.lrange('blockchain', 0, -1)
+    print(f"[DEBUG] Bloques en Redis después de guardar: {saved_block}")
+
 
 # --- TERMINAN METODOS REDIS --- #
 
