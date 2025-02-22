@@ -24,20 +24,26 @@ credentialPath = 'credentials.json'
 
 
 # Conexion a Redis
-
 def redisConnect():
+    global client  # Hacer que `client` sea accesible globalmente
     try:
         print(f"[DEBUG] Intentando conectar a Redis en {hostRedis}:{portRedis}", flush=True)
         client = redis.Redis(host=hostRedis, port=portRedis, db=0, decode_responses=True)
 
         # Verificar si Redis responde
         if client.ping():
-            print("[x] Conectado a Redis con éxito", flush=True)
+            print("[✅] Conectado a Redis exitosamente!", flush=True)
+        
+        # Intenta guardar un dato de prueba en Redis
+        client.set("test_key", "Hola Redis!")
+
+        # Verifica si el dato se guardó correctamente
+        value = client.get("test_key")
+        print(f"[DEBUG] Valor de test_key en Redis: {value}", flush=True)
+
         return client
     except Exception as e:
-        print(f"[ERROR] No se pudo conectar a Redis: {e}", flush=True)
-        return None
-
+        print(f"[❌] Error conectando a Redis: {e}", flush=True)
 
 
 # Conexion a Rabbit-MQ para encolar Transacciones
