@@ -12,31 +12,35 @@ spec:
       labels:
         app: coordinador
     spec:
+      serviceAccountName: default  # ✅ Asegurar que no sea `null`
       containers:
       - name: coordinador
-        image: facundootero/coordinador:latest  # 🔹 Se actualizará automáticamente
+        image: facundootero/coordinador:latest  # ✅ Se actualizará automáticamente
         ports:
-        - containerPort: 5000                     
-          resources:   # ✅ Limites de CPU y memoria
-           requests:
-              memory: "256Mi"
-              cpu: "250m"
-           limits:
-              memory: "512Mi"
-              cpu: "500m"
-           livenessProbe:  # ✅ Verifica si está vivo, si falla lo reinicia
-           httpGet:
-              path: /status
-              port: 5000
-           initialDelaySeconds: 10
-           periodSeconds: 15
-          readinessProbe:  # ✅ Verifica si está listo para recibir tráfico
-            httpGet:
-              path: /status
-              port: 5000
-            initialDelaySeconds: 5
-            periodSeconds: 10
-      
+        - containerPort: 5000
+        
+        resources:   # ✅ Limites de CPU y memoria (se movió correctamente)
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+
+        livenessProbe:  # ✅ Verifica si está vivo, si falla lo reinicia
+          httpGet:
+            path: /status
+            port: 5000
+          initialDelaySeconds: 10
+          periodSeconds: 15
+
+        readinessProbe:  # ✅ Verifica si está listo para recibir tráfico
+          httpGet:
+            path: /status
+            port: 5000
+          initialDelaySeconds: 5
+          periodSeconds: 10
+
 ---
 apiVersion: v1
 kind: Service
