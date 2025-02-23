@@ -22,10 +22,11 @@ spec:
           value: "5672"
         - name: COORDINATOR_URL
           value: "http://coordinador-integrador:5000/solved_task"
-        resources:
-          limits:
-            cpu: "500m"
-            memory: "256Mi"
-          requests:
-            cpu: "250m"
-            memory: "128Mi"
+          resources:
+            limits:
+              cpu: "250m"
+              memory: "128Mi"
+            requests:
+            cpu: "100m"
+            memory: "64Mi"
+
