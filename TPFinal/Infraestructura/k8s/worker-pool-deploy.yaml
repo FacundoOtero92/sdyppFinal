@@ -30,8 +30,8 @@ spec:
           value: "2"
         resources:
           limits:
-            cpu: "500m"
-            memory: "256Mi"
+            cpu: "150m"
+            memory: "96Mi"
           requests:
-            cpu: "250m"
-            memory: "128Mi"
+            cpu: "50m"
+            memory: "32Mi"
