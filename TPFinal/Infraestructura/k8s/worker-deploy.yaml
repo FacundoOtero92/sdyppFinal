@@ -11,21 +11,23 @@ spec:
     metadata:
       labels:
         app: worker-cpu
-    spec:
-      containers:
-      - name: worker-cpu
-        image: facundootero/worker-cpu:latest
-        env:
-        - name: RABBITMQ_HOST
-          value: "rabbitmq"  # Asegúrate de que coincide con el servicio de RabbitMQ
-        - name: RABBITMQ_PORT
-          value: "5672"
-        - name: COORDINATOR_URL
-          value: "http://coordinador-integrador:5000/solved_task"
-        resources:
-          requests:
-            cpu: "100m"
-            memory: "64Mi"
-          limits:
-            cpu: "250m"
-            memory: "128Mi"
+  spec:
+    containers:
+    - name: worker-cpu
+      image: facundootero/worker-cpu:latest
+      env:
+    - name: RABBITMQ_HOST
+      value: "rabbitmq"
+    - name: RABBITMQ_PORT
+      value: "5672"
+    - name: COORDINATOR_URL
+      value: "http://coordinador-integrador:5000/solved_task"
+      resources:  # ❌ ERROR: Esto no debe estar aquí dentro de `env`
+        limits:
+          cpu: "250m"
+          memory: "128Mi"
+        requests:
+          cpu: "100m"
+          memory: "64Mi"
+
+
