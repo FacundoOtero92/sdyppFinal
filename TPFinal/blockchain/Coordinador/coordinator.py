@@ -98,8 +98,9 @@ def calculateHash(data):
 # --- Metodos Redis --- #
 
 def getUltimoBlock():
-
     ultimoBlock = client.lindex('blockchain', 0)
+    print("entro en get ultimo block")
+    print(f"ultimo block:  {ultimoBlock}")
     if ultimoBlock:
         return json.loads(ultimoBlock)
     return None 
