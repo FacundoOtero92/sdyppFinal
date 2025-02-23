@@ -4,8 +4,10 @@ import hashlib
 import random
 import requests
 import time
+import os
 
-hostRabbit = '35.231.16.85'
+# hostRabbit = '104.196.215.66'
+hostRabbit = os.getenv("RABBITMQ_HOST", "rabbitmq")
 queueNameTx = 'QueueTransactions'
 exchangeBlock = 'ExchangeBlock'
 
@@ -16,9 +18,11 @@ def calculateHash(data):
 
 def sendResult(data):
     # url = "http://localhost:5000/solved_task"
-    url = "http://34.138.89.217:5000/solved_task"
+    # url = "http://35.227.79.99:5000/solved_task"
+    coordinator_url = os.getenv("COORDINATOR_URL", "http://coordinador-integrador:5000/solved_task") 
+
     try:
-        response = requests.post(url, json=data)
+        response = requests.post(coordinator_url, json=data)
         print("Post response:", response.text)
     except requests.exceptions.RequestException as e:
         print("Failed to send POST request:", e)
@@ -71,7 +75,7 @@ def on_message_received(ch, method, properties, body):
     print('')
 
 def main():
-    connection = pika.BlockingConnection(pika.ConnectionParameters(host="35.231.16.85",
+    connection = pika.BlockingConnection(pika.ConnectionParameters(host=hostRabbit,
         port=5672,
         credentials=pika.PlainCredentials("guest", "guest"),
     )
