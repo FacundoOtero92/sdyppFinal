@@ -24,8 +24,8 @@ spec:
           value: "http://coordinador-integrador:5000/solved_task"
         resources:  # ✅ `resources` ahora está fuera de `env`, en el nivel correcto
           limits:
-            cpu: "250m"
+            cpu: "200m"
             memory: "128Mi"
           requests:
-            cpu: "100m"
+            cpu: "50m"
             memory: "64Mi"
