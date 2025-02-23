@@ -8,7 +8,7 @@ import os
 import threading
 
 hostRabbit = os.getenv("RABBITMQ_HOST", "rabbitmq")
-exchangeBlock = 'ExchangeBlock'
+exchangeBlock = os.getenv("EXCHANGE_BLOCK", "ExchangeBlock")
 NUM_WORKERS = int(os.getenv("NUM_WORKERS", "2"))
 
 
@@ -59,23 +59,32 @@ def on_message_received(ch, method, properties, body):
             sendResult(dataResult)
 
     ch.basic_ack(delivery_tag=method.delivery_tag)
-    print(f"Result found and posted for block ID {data['blockId']} in {processingTime:.2f} seconds in {intentos} intentos")
-    print(f"Resultado: {randomNumber}")
+    print(f"Result found and posted for block ID {data['blockId']} in {processingTime:.2f} seconds after {intentos} attempts")
 
 
 def worker():
-    connection = pika.BlockingConnection(pika.ConnectionParameters(host=hostRabbit, port=5672,
-                                                                   credentials=pika.PlainCredentials("guest", "guest")))
-    channel = connection.channel()
-    channel.exchange_declare(exchange=exchangeBlock, exchange_type='topic', durable=True)
-    result = channel.queue_declare('', exclusive=True)
-    queue_name = result.method.queue
-    channel.queue_bind(exchange=exchangeBlock, queue=queue_name, routing_key='blocks')
+    while True:
+        try:
+            connection = pika.BlockingConnection(pika.ConnectionParameters(
+                host=hostRabbit, port=5672,
+                credentials=pika.PlainCredentials("guest", "guest")))
 
-    channel.basic_consume(queue=queue_name, on_message_callback=on_message_received, auto_ack=False)
+            channel = connection.channel()
+            channel.exchange_declare(exchange=exchangeBlock, exchange_type='topic', durable=True)
+            result = channel.queue_declare('', exclusive=True)
+            queue_name = result.method.queue
+            channel.queue_bind(exchange=exchangeBlock, queue=queue_name, routing_key='blocks')
 
-    print('Worker started, waiting for messages...')
-    channel.start_consuming()
+            channel.basic_consume(queue=queue_name, on_message_callback=on_message_received, auto_ack=False)
+
+            print('Worker started, waiting for messages...')
+            channel.start_consuming()
+        except pika.exceptions.AMQPConnectionError as e:
+            print(f"Connection error: {e}. Reconnecting in 5 seconds...")
+            time.sleep(5)
+        except Exception as e:
+            print(f"Unexpected error: {e}. Restarting worker in 5 seconds...")
+            time.sleep(5)
 
 
 def main():
