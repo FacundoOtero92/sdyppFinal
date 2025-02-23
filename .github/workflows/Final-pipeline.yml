@@ -254,3 +254,13 @@ jobs:
       run: |
                     kubectl apply -f TPFinal/Infraestructura/k8s/worker-deploy.yaml
                              
+
+    - name: 🏗️ Construcción de la imagen del Worker Pool
+      run: |
+            -f TPFinal/blockchain/Minero/worker_pool.dockerfile -t facundootero/worker-pool:latest TPFinal/blockchain/Minero
+            
+    - name: 📤 Subir imagen al DockerHub
+      run: docker push facundootero/worker-pool:latest
+            
+    - name: 🚀 Desplegar Worker Pool en Kubernetes
+      run:     kubectl apply -f TPFinal/Infraestructura/k8s/worker-pool-deploy.yaml              
