@@ -266,4 +266,4 @@ jobs:
       run: |    
       
                 kubectl apply -f TPFinal/Infraestructura/k8s/worker-pool-deploy.yaml
-                kubectl scale deployment worker-cpu --replicas=0              
+ # kubectl scale deployment worker-cpu --replicas=0 Descomentar para que el worker- cpu deje de funcionar y darle solo al pool              
