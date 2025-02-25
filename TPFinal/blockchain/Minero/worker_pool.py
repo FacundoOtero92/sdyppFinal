@@ -39,6 +39,7 @@ def on_message_received(ch, method, properties, body):
     print("## Iniciando Minero ##")
 
     while not encontrado:
+        print("+++++++++++++++++++++++++++HOLA SOY EL POOL++++++++++++++++++++++++++++++++++")
         intentos += 1
         randomNumber = str(random.randint(0, data['numMaxRandom']))
 
@@ -65,6 +66,7 @@ def on_message_received(ch, method, properties, body):
 def worker():
     while True:
         try:
+            print("+++++++++++++++++++++++++++HOLA SOY EL POOL2++++++++++++++++++++++++++++++++++")
             connection = pika.BlockingConnection(pika.ConnectionParameters(
                 host=hostRabbit, port=5672,
                 credentials=pika.PlainCredentials("guest", "guest")))
