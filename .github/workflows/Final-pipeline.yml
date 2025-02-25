@@ -263,4 +263,7 @@ jobs:
       run: docker push facundootero/worker-pool:latest
             
     - name: 🚀 Desplegar Worker Pool en Kubernetes
-      run:     kubectl apply -f TPFinal/Infraestructura/k8s/worker-pool-deploy.yaml              
+      run: |    
+      
+                kubectl apply -f TPFinal/Infraestructura/k8s/worker-pool-deploy.yaml
+                kubectl scale deployment worker-cpu --replicas=0              
