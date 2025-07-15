@@ -47,7 +47,7 @@ jobs:
     - name: Configurar kubectl con credenciales de GKE
       run: |
                         echo "🔹 Obteniendo credenciales del clúster de GKE..."
-                        gcloud container clusters get-credentials cluster-integrador --zone us-east1-c --project sdyppfinal2025
+                        gcloud container clusters get-credentials cluster-integrador --zone us-east1-c --project sdypp082025
                         kubectl config current-context
               
       
@@ -110,8 +110,8 @@ jobs:
     
     - name: Verificar y crear bucket en GCS si no existe
       run: |
-          BUCKET_NAME="bucket_integrador_final2025"
-          PROJECT_ID="sdyppfinal2025"
+          BUCKET_NAME="bucket_integrador_final082025"
+          PROJECT_ID="sdypp082025"
           REGION="us-east1"
 
           if ! gsutil ls -b gs://$BUCKET_NAME 2>/dev/null; then
@@ -131,17 +131,17 @@ jobs:
     
           ls -lah
 
-            BUCKET_NAME="bucket_integrador_final2025"
+            BUCKET_NAME="bucket_integrador_final082025"
             PREFIX="cluster/state"
 
             terraform init --reconfigure \
               --backend-config "bucket=${BUCKET_NAME}" \
               --backend-config "prefix=${PREFIX}"
             
-            terraform import google_compute_network.main projects/sdyppfinal2025/global/networks/main || true
-            terraform import google_compute_address.nat projects/sdyppfinal2025/regions/us-east1/addresses/nat || true
-            terraform import google_compute_firewall.allow-ssh projects/sdyppfinal2025/global/firewalls/allow-ssh || true
-            terraform import google_service_account.kubernetes projects/sdyppfinal2025/serviceAccounts/kubernetes@sdyppfinal2025.iam.gserviceaccount.com || true
+            terraform import google_compute_network.main projects/sdypp082025/global/networks/main || true
+            terraform import google_compute_address.nat projects/sdypp082025/regions/us-east1/addresses/nat || true
+            terraform import google_compute_firewall.allow-ssh projects/sdypp082025/global/firewalls/allow-ssh || true
+            terraform import google_service_account.kubernetes projects/sdypp082025/serviceAccounts/kubernetes@sdypp082025.iam.gserviceaccount.com || true
            
             terraform validate
 
@@ -199,7 +199,7 @@ jobs:
 
     - name: Obtener credenciales de GKE
       run: |
-          gcloud container clusters get-credentials cluster-integrador --zone us-east1-c --project sdyppfinal2025
+          gcloud container clusters get-credentials cluster-integrador --zone us-east1-c --project sdypp082025
           kubectl get nodes
 
     - name: Aplicar Deployment de RabbitMQ en Kubernetes

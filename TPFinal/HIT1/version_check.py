@@ -9,5 +9,5 @@ def gpu_assert(err):
 try:
     cuda.synchronize()
     print("Synchronization successful.")
-except cuda.CudaAPIError as e:
+except cuda.CudaAPIError as  e:
     gpu_assert(e.code)
