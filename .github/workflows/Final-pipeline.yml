@@ -30,7 +30,7 @@ jobs:
   
     - name: Configurar el proyecto en Google Cloud
       run: |
-                gcloud config set project sdyppfinal2025
+                gcloud config set project sdypp082025
                 gcloud config set compute/zone us-east1-c
                 gcloud config set compute/region us-east1
 
@@ -53,27 +53,21 @@ jobs:
       
     - name: Asignar permisos a la cuenta predeterminada de Compute Engine
       run: |
-                            COMPUTE_SA="105059060773-compute@developer.gserviceaccount.com"
+                            COMPUTE_SA="295835202730-compute@developer.gserviceaccount.com"
                             
                             echo "🛠️ Asignando permisos de storage.objectAdmin a $COMPUTE_SA..."
-                            gcloud storage buckets add-iam-policy-binding gs://bucket_integrador_final2025 \
+                            gcloud storage buckets add-iam-policy-binding gs://bucket_integrador_final082025 \
                               --member="serviceAccount:$COMPUTE_SA" \
                               --role="roles/storage.objectAdmin"
                   
                             echo "🛠️ Asignando permisos de storage.admin a $COMPUTE_SA..."
-                            gcloud projects add-iam-policy-binding sdyppfinal2025 \
+                            gcloud projects add-iam-policy-binding sdypp082025 \
                               --member="serviceAccount:$COMPUTE_SA" \
                               --role="roles/storage.admin"
                   
                             echo "✅ Permisos asignados correctamente a $COMPUTE_SA."
                   
                   
-
-
-
-
-
-
 
 
     - name: Install dependencies (Coordinador)
