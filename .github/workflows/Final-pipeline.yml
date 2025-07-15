@@ -73,19 +73,19 @@ jobs:
       
     - name: Asignar permisos a la cuenta predeterminada de Compute Engine
       run: |
-                            COMPUTE_SA="295835202730-compute@developer.gserviceaccount.com"
-                            
-                            echo "🛠️ Asignando permisos de storage.objectAdmin a $COMPUTE_SA..."
-                            gcloud storage buckets add-iam-policy-binding gs://bucket_integrador_final082025 \
-                              --member="serviceAccount:$COMPUTE_SA" \
-                              --role="roles/storage.objectAdmin"
-                  
-                            echo "🛠️ Asignando permisos de storage.admin a $COMPUTE_SA..."
-                            gcloud projects add-iam-policy-binding sdypp082025 \
-                              --member="serviceAccount:$COMPUTE_SA" \
-                              --role="roles/storage.admin"
-                  
-                            echo "✅ Permisos asignados correctamente a $COMPUTE_SA."
+        set -e
+        COMPUTE_SA="295835202730-compute@developer.gserviceaccount.com"
+
+        echo "🔑 Asignando permisos de storage.objectAdmin..."
+        gcloud storage buckets add-iam-policy-binding gs://bucket_integrador_final082025 \
+          --member="serviceAccount:$COMPUTE_SA" \
+          --role="roles/storage.objectAdmin" || echo "⚠️ Warning: puede que ya existan los permisos."
+
+        echo "🔑 Asignando permisos de storage.admin..."
+        gcloud projects add-iam-policy-binding sdypp082025 \
+          --member="serviceAccount:$COMPUTE_SA" \
+          --role="roles/storage.admin" || echo "⚠️ Warning: puede que ya existan los permisos."
+
                   
                   
 
