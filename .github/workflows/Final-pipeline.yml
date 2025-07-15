@@ -42,6 +42,26 @@ jobs:
                     curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
                     sudo apt-get update && sudo apt-get install -y google-cloud-sdk-gke-gcloud-auth-plugin
                     echo "✅ Plugin instalado correctamente."
+
+
+    - name: Crear el clúster GKE si no existe
+      run: |
+        CLUSTER_NAME="cluster-integrador"
+        ZONE="us-east1-c"
+        PROJECT_ID="sdypp082025"
+
+        echo "🔍 Verificando si el clúster '$CLUSTER_NAME' ya existe..."
+        if ! gcloud container clusters describe $CLUSTER_NAME --zone $ZONE --project $PROJECT_ID >/dev/null 2>&1; then
+          echo "🚀 El clúster no existe, creando..."
+          gcloud container clusters create $CLUSTER_NAME \
+            --zone $ZONE \
+            --num-nodes 1 \
+            --project $PROJECT_ID
+          echo "✅ Clúster creado exitosamente."
+        else
+          echo "✔️ El clúster ya existe. No se necesita crear."
+        fi
+                
           
          
     - name: Configurar kubectl con credenciales de GKE
