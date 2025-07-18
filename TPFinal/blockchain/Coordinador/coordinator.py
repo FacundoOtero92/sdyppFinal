@@ -7,8 +7,11 @@ import pika
 import redis
 import time
 from google.cloud import storage
+from prometheus_client import start_http_server, Counter, Histogram, generate_latest, CONTENT_TYPE_LATEST
+from flask import Response
 
-app = Flask(__name__)
+
+
 
 # VARIABLES
 
@@ -167,6 +170,16 @@ def descargarBlock(bucket, blockId):
     return block
 
 
+app = Flask(__name__)
+
+#### Crear métricas######
+BLOCKS_PROCESSED = Counter('blocks_processed_total', 'Bloques procesados exitosamente')
+BLOCK_PROCESSING_TIME = Histogram('block_processing_seconds', 'Tiempo de procesamiento de bloques')
+
+@app.route('/metrics')
+def metrics():
+    return Response(generate_latest(), mimetype=CONTENT_TYPE_LATEST)
+##############################
 
 @app.route('/transaction', methods=['POST'])
 def addTransaction():
@@ -268,7 +281,12 @@ def receive_solved_task():
             newBlock['timestamp'] = timestamp
             newBlock['nonce'] = data['result']
             print(f"[DEBUG] paso por aca")
-            postBlock(newBlock)
+           ##cuánto tarda en guardar el bloque (postBlock)
+           ##cuente cuántos bloques fueron procesados
+            with BLOCK_PROCESSING_TIME.time():
+                postBlock(newBlock)
+            BLOCKS_PROCESSED.inc()
+           #######################################
             print('[x] Bloque validado » Agregado a la blockchain')
 
             return jsonify({'message': 'Bloque validado » Agregado a la blockchain'}), 201
@@ -348,5 +366,6 @@ status_thread = threading.Thread(target=processPackages)
 status_thread.start()
 
 if __name__ == '__main__':
+    start_http_server(8000) 
     app.run(host='0.0.0.0')
 

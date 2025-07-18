@@ -1,0 +1,16 @@
+additionalScrapeConfigs:
+  - job_name: 'coordinator'
+    static_configs:
+      - targets: ['coordinator-integrador:8000']
+
+  - job_name: 'worker'
+    static_configs:
+      - targets: ['worker-cpu:8010']
+
+  - job_name: 'redis'
+    static_configs:
+      - targets: ['redis-exporter:9121']
+
+  - job_name: 'rabbitmq'
+    static_configs:
+      - targets: ['rabbitmq-exporter:9419']

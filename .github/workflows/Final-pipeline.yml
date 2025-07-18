@@ -116,12 +116,6 @@ jobs:
         echo '${{ secrets.GOOGLE_CREDENTIALS_COORDINADOR }}' > credentials.json
    
 
-  
-
-
-
-        
-
 
 
      # Setup de CLI de Terraform
@@ -280,4 +274,22 @@ jobs:
       run: |    
       
                 kubectl apply -f TPFinal/Infraestructura/k8s/worker-pool-deploy.yaml
- # kubectl scale deployment worker-cpu --replicas=0 Descomentar para que el worker- cpu deje de funcionar y darle solo al pool              
+ # kubectl scale deployment worker-cpu --replicas=0 Descomentar para que el worker- cpu deje de funcionar y darle solo al pool  
+ 
+ 
+    - name: Build Docker image
+      run: docker build -t gcr.io/$PROJECT_ID/coordinator:latest .
+
+    - name: Push to GCR
+      run: docker push gcr.io/$PROJECT_ID/coordinator:latest
+
+    - name: Deploy to GKE
+      run: kubectl set image deployment/coordinator-deployment coordinator=gcr.io/$PROJECT_ID/coordinator:latest
+
+    - name: Instalar Prometheus con Helm
+      run: |
+        helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+        helm repo update
+        helm upgrade --install prometheus prometheus-community/kube-prometheus-stack \
+          --set prometheus.prometheusSpec.additionalScrapeConfigsMountPath=/etc/prometheus/additional_scrape_configs \
+          --set-file prometheus.prometheusSpec.additionalScrapeConfigs=monitoreo/prometheus-additional-config.yaml
