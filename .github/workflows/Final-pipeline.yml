@@ -284,4 +284,5 @@ jobs:
         helm repo update
         helm upgrade --install prometheus prometheus-community/kube-prometheus-stack \
           --set prometheus.prometheusSpec.additionalScrapeConfigsMountPath=/etc/prometheus/additional_scrape_configs \
-          --set-file prometheus.prometheusSpec.additionalScrapeConfigs=monitoreo/prometheus-additional-config.yaml
+          --set-file prometheus.prometheusSpec.additionalScrapeConfigs=TPFinal/Infraestructura/monitoreo/prometheus-additional-config.yaml
+
