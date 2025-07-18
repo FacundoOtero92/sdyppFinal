@@ -2,10 +2,12 @@ additionalScrapeConfigs:
   - job_name: 'coordinator'
     static_configs:
       - targets: ['coordinator-integrador:8000']
+        labels:
+          app: coordinator
 
-  - job_name: 'worker'
-    static_configs:
-      - targets: ['worker-cpu:8010']
+  # - job_name: 'worker'
+  #   static_configs:
+  #     - targets: ['worker-cpu:8010']
 
   - job_name: 'redis'
     static_configs:
