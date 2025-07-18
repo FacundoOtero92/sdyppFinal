@@ -277,11 +277,16 @@ jobs:
  # kubectl scale deployment worker-cpu --replicas=0 Descomentar para que el worker- cpu deje de funcionar y darle solo al pool  
  
  
-    - name: Build Docker image
-      run: docker build -t gcr.io/$PROJECT_ID/coordinator:latest .
+    - name: Build and Push Docker Image (Coordinator GCR)
+      run: |
+        docker build -f TPFinal/blockchain/Coordinador/Dockerfile \
+          -t gcr.io/sdypp082025/coordinator:latest TPFinal/blockchain/Coordinador
 
-    - name: Push to GCR
-      run: docker push gcr.io/$PROJECT_ID/coordinator:latest
+        echo "${{ secrets.GOOGLE_CLOUD_CREDENTIALS }}" > keyfile.json
+        gcloud auth activate-service-account --key-file=keyfile.json
+        gcloud auth configure-docker --quiet
+
+        docker push gcr.io/sdypp082025/coordinator:latest
 
     - name: Deploy to GKE
       run: kubectl set image deployment/coordinator-deployment coordinator=gcr.io/$PROJECT_ID/coordinator:latest
