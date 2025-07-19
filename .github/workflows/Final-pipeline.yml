@@ -280,10 +280,21 @@ jobs:
       uses: azure/setup-helm@v3
       with:
         version: 'v3.13.0'
-    - name: Eliminar recursos previos de Prometheus si existen
+    - name: 🔥 Limpiar recursos anteriores de Prometheus
       run: |
+        echo "Eliminando recursos conflictivos del namespace 'default'..."
         kubectl delete clusterrole prometheus-grafana-clusterrole --ignore-not-found
-        kubectl delete namespace monitoring --ignore-not-found
+        kubectl delete clusterrole prometheus-kube-state-metrics --ignore-not-found
+        kubectl delete clusterrolebinding prometheus-grafana-clusterrolebinding --ignore-not-found
+        kubectl delete clusterrolebinding prometheus-kube-state-metrics --ignore-not-found
+        kubectl delete serviceaccount prometheus-grafana --namespace default --ignore-not-found
+        kubectl delete serviceaccount prometheus-kube-state-metrics --namespace default --ignore-not-found
+        kubectl delete deployment prometheus-grafana --namespace default --ignore-not-found
+        kubectl delete svc prometheus-grafana --namespace default --ignore-not-found
+        kubectl delete svc prometheus-kube-prometheus-prometheus --namespace default --ignore-not-found
+        kubectl delete svc prometheus-kube-state-metrics --namespace default --ignore-not-found
+        kubectl delete pod -l app.kubernetes.io/name=prometheus --namespace default --ignore-not-found
+
 
     - name: Instalar Prometheus con Helm
       run: |
