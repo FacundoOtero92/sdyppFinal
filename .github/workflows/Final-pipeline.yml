@@ -276,6 +276,10 @@ jobs:
                 kubectl apply -f TPFinal/Infraestructura/k8s/worker-pool-deploy.yaml
  # kubectl scale deployment worker-cpu --replicas=0 Descomentar para que el worker- cpu deje de funcionar y darle solo al pool  
  
+    - name: Instalar Helm
+      uses: azure/setup-helm@v3
+      with:
+        version: 'v3.13.0'
  
 
     - name: Instalar Prometheus con Helm
@@ -286,3 +290,7 @@ jobs:
           --set prometheus.prometheusSpec.additionalScrapeConfigsMountPath=/etc/prometheus/additional_scrape_configs \
           --set-file prometheus.prometheusSpec.additionalScrapeConfigs=TPFinal/Infraestructura/monitoreo/prometheus-additional-config.yaml
 
+    - name: Exponer Prometheus
+      run: |
+       kubectl expose deploy prometheus-kube-prometheus-prometheus \
+        --type=LoadBalancer --name=prometheus-lb || true
