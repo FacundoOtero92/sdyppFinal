@@ -287,11 +287,10 @@ jobs:
 
     - name: Instalar Prometheus con Helm
       run: |
-        helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
-        helm repo update
-        helm upgrade --install prometheus prometheus-community/kube-prometheus-stack \
-          -n monitoring --create-namespace
-
+          helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+          helm repo update
+          helm upgrade --install prometheus prometheus-community/kube-prometheus-stack \
+            -n monitoring --create-namespace
     - name: Exponer Prometheus
       run: |
        kubectl expose deploy prometheus-kube-prometheus-prometheus \
