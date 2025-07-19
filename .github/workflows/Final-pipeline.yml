@@ -280,23 +280,13 @@ jobs:
       uses: azure/setup-helm@v3
       with:
         version: 'v3.13.0'
-    - name: 🔥 Limpiar recursos anteriores de Prometheus
+    - name: 🔄 Desinstalar Prometheus previo en default (si existe)
       run: |
-        echo "Eliminando recursos conflictivos del namespace 'default'..."
-        kubectl delete clusterrole prometheus-grafana-clusterrole --ignore-not-found
-        kubectl delete clusterrole prometheus-kube-state-metrics --ignore-not-found
-        kubectl delete clusterrolebinding prometheus-grafana-clusterrolebinding --ignore-not-found
-        kubectl delete clusterrolebinding prometheus-kube-state-metrics --ignore-not-found
-        kubectl delete serviceaccount prometheus-grafana --namespace default --ignore-not-found
-        kubectl delete serviceaccount prometheus-kube-state-metrics --namespace default --ignore-not-found
-        kubectl delete deployment prometheus-grafana --namespace default --ignore-not-found
-        kubectl delete svc prometheus-grafana --namespace default --ignore-not-found
-        kubectl delete svc prometheus-kube-prometheus-prometheus --namespace default --ignore-not-found
-        kubectl delete svc prometheus-kube-state-metrics --namespace default --ignore-not-found
-        kubectl delete pod -l app.kubernetes.io/name=prometheus --namespace default --ignore-not-found
+        helm uninstall prometheus -n default || true
+        kubectl delete clusterrolebinding -l app.kubernetes.io/instance=prometheus --ignore-not-found
+        kubectl delete clusterrole -l app.kubernetes.io/instance=prometheus --ignore-not-found
 
-
-    - name: Instalar Prometheus con Helm
+    - name: 📦 Instalar Prometheus en namespace monitoring
       run: |
         helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
         helm repo update
