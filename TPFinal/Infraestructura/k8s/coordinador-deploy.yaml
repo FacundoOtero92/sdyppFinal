@@ -65,7 +65,8 @@ spec:
   selector:
     app: coordinador
   ports:
-    - protocol: TCP
+    - name: http  # 🔧 AÑADIR ESTE CAMPO
+      protocol: TCP
       port: 5000
       targetPort: 5000
     - name: prometheus
