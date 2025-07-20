@@ -1,9 +1,12 @@
 additionalScrapeConfigs:
-  scrape_configs:
+scrape_configs:
   - job_name: 'coordinador'
-    static_configs:
-      - targets: ['coordinador-integrador.default.svc.cluster.local:8000']
-
+    kubernetes_sd_configs:
+      - role: endpoints
+    relabel_configs:
+      - source_labels: [__meta_kubernetes_service_name, __meta_kubernetes_namespace]
+        action: keep
+        regex: coordinador-integrador;default
 
 
   # - job_name: 'worker'
