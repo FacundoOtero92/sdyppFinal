@@ -59,15 +59,16 @@ apiVersion: v1
 kind: Service
 metadata:
   name: coordinador-integrador
+  namespace: default
 spec:
-  type: LoadBalancer
   selector:
     app: coordinador
   ports:
-    - protocol: TCP
+    - name: flask
+      protocol: TCP
       port: 5000
       targetPort: 5000
-    - name: prometheus-metrics
+    - name: prometheus
       protocol: TCP
       port: 8000
       targetPort: 8000
