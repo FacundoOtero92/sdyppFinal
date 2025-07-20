@@ -67,3 +67,7 @@ spec:
     - protocol: TCP
       port: 5000
       targetPort: 5000
+    - name: prometheus-metrics
+      protocol: TCP
+      port: 8000
+      targetPort: 8000

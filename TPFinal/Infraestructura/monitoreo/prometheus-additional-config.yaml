@@ -1,8 +1,9 @@
 additionalScrapeConfigs:
   scrape_configs:
-  - job_name: 'coordinator'
+  - job_name: 'coordinador'
     static_configs:
-      - targets: ['coordinator-service-name.monitoring.svc.cluster.local:8000']
+      - targets: ['coordinador-integrador.default.svc.cluster.local:8000']
+
 
 
   # - job_name: 'worker'
