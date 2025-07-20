@@ -61,11 +61,11 @@ metadata:
   name: coordinador-integrador
   namespace: default
 spec:
+  type: LoadBalancer
   selector:
     app: coordinador
   ports:
-    - name: flask
-      protocol: TCP
+    - protocol: TCP
       port: 5000
       targetPort: 5000
     - name: prometheus
