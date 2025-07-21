@@ -173,6 +173,7 @@ def descargarBlock(bucket, blockId):
 app = Flask(__name__)
 
 #### Crear métricas######
+
 # BLOCKS_PROCESSED = Counter('blocks_processed_total', 'Bloques procesados exitosamente')
 # BLOCK_PROCESSING_TIME = Histogram('block_processing_seconds', 'Tiempo de procesamiento de bloques')
 
