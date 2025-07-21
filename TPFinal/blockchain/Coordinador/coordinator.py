@@ -180,7 +180,9 @@ app = Flask(__name__)
 @app.route('/metrics')
 def metrics():
     return Response(generate_latest(), mimetype=CONTENT_TYPE_LATEST)
-##############################
+
+
+############################
 
 @app.route('/transaction', methods=['POST'])
 def addTransaction():
