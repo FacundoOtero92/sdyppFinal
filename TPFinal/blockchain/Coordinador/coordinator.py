@@ -173,8 +173,8 @@ def descargarBlock(bucket, blockId):
 app = Flask(__name__)
 
 #### Crear métricas######
-BLOCKS_PROCESSED = Counter('blocks_processed_total', 'Bloques procesados exitosamente')
-BLOCK_PROCESSING_TIME = Histogram('block_processing_seconds', 'Tiempo de procesamiento de bloques')
+# BLOCKS_PROCESSED = Counter('blocks_processed_total', 'Bloques procesados exitosamente')
+# BLOCK_PROCESSING_TIME = Histogram('block_processing_seconds', 'Tiempo de procesamiento de bloques')
 
 @app.route('/metrics')
 def metrics():
@@ -283,9 +283,9 @@ def receive_solved_task():
             print(f"[DEBUG] paso por aca")
            ##cuánto tarda en guardar el bloque (postBlock)
            ##cuente cuántos bloques fueron procesados
-            with BLOCK_PROCESSING_TIME.time():
-                postBlock(newBlock)
-            BLOCKS_PROCESSED.inc()
+            # with BLOCK_PROCESSING_TIME.time():
+            postBlock(newBlock)
+            # BLOCKS_PROCESSED.inc()
            #######################################
             print('[x] Bloque validado » Agregado a la blockchain')
 
@@ -366,6 +366,6 @@ status_thread = threading.Thread(target=processPackages)
 status_thread.start()
 
 if __name__ == '__main__':
-    start_http_server(8000) 
+    # start_http_server(8000) 
     app.run(host='0.0.0.0')
 
