@@ -1,7 +1,10 @@
 name: 🐳 Construcción y Push de Imágenes Docker
-
 on:
-  workflow_call:
+  push:
+    branches:
+      - main
+    paths:
+      - 'TPFinal/blockchain/Coordinador/**'
 
 jobs:
   docker:
