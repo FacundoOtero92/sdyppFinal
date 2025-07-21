@@ -1,0 +1,13 @@
+name: ☸️ Despliegue en Kubernetes
+
+on:
+  workflow_call:
+
+jobs:
+  k8s:
+    runs-on: ubuntu-latest
+    steps:
+      - name: ☸️ Aplicar Deploys K8s
+        run: |
+          kubectl apply -f TPFinal/Infraestructura/k8s/rabbit-deploy.yaml
+          kubectl apply -f TPFinal/Infraestructura/k8s/redis-deploy.yaml
