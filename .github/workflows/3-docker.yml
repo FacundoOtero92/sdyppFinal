@@ -10,8 +10,36 @@ jobs:
   docker:
     runs-on: ubuntu-latest
     steps:
-      - name: 🐳 Build & Push Coordinador
-        run: |
-          docker build -f TPFinal/blockchain/Coordinador/dockerfile.dockerfile -t facundootero/coordinador:latest TPFinal/blockchain/Coordinador
-          echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
-          docker push facundootero/coordinador:latest
+       - name: Build and Push Docker Image (Coordinador)
+         run: |
+            docker build -f TPFinal/blockchain/Coordinador/dockerfile.dockerfile -t facundootero/coordinador:latest TPFinal/blockchain/Coordinador
+            echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+            docker push facundootero/coordinador:latest
+
+       - name: Obtener IP pública del Coordinador
+         run: |
+                  echo "Esperando a que se asigne la IP pública al Coordinador..."
+                  for i in {1..10}; do
+                      IP=$(kubectl get service coordinador-integrador -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+                      if [[ -n "$IP" ]]; then
+                          echo "IP pública del Coordinador: $IP"
+                          echo "COORDINADOR_IP=$IP" >> $GITHUB_ENV
+                          break
+                      fi
+                      echo " Aún no se asignó la IP, reintentando en 10 segundos..."
+                      sleep 10
+                  done     
+
+       - name: Build and Push Docker Image (Worker)
+         run: |
+                    docker build -f TPFinal/blockchain/Minero/worker_cpu.dockerfile -t facundootero/worker-cpu:latest TPFinal/blockchain/Minero
+                    echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+                    docker push facundootero/worker-cpu:latest
+
+
+       - name: 🏗️ Construcción de la imagen del Worker Pool
+         run: |
+             docker build -f TPFinal/blockchain/Minero/worker_pool.dockerfile -t facundootero/worker-pool:latest TPFinal/blockchain/Minero
+            
+       - name: 📤 Subir imagen al DockerHub
+         run: docker push facundootero/worker-pool:latest              

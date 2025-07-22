@@ -10,9 +10,68 @@ jobs:
       - name: 🧱 Configurar Terraform
         uses: hashicorp/setup-terraform@v3
 
-      - name: 🚀 Inicializar y aplicar Terraform
+      - name: Terraform setup
+        uses: hashicorp/setup-terraform@v3
+    
+      - name: Verificar y crear bucket en GCS si no existe
+        run: |
+          BUCKET_NAME="bucket_integrador_final082025"
+          PROJECT_ID="sdypp082025"
+          REGION="us-east1"
+
+          if ! gsutil ls -b gs://$BUCKET_NAME 2>/dev/null; then
+            echo "El bucket no existe, creando..."
+            gsutil mb -p $PROJECT_ID -c STANDARD -l $REGION gs://$BUCKET_NAME
+          else
+            echo "El bucket ya existe."
+          fi
+
+
+      - name: Terraform init
         working-directory: "TPFinal/Infraestructura/terraform servicios"
+        env:
+            GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CLOUD_CREDENTIALS }}
         run: |
           echo '${{ secrets.GOOGLE_CLOUD_CREDENTIALS }}' > credentials.json
-          terraform init
-          terraform apply -auto-approve
+    
+          ls -lah
+
+            BUCKET_NAME="bucket_integrador_final082025"
+            PREFIX="cluster/state"
+
+            terraform init --reconfigure \
+              --backend-config "bucket=${BUCKET_NAME}" \
+              --backend-config "prefix=${PREFIX}"
+            
+            terraform import google_compute_network.main projects/sdypp082025/global/networks/main || true
+            terraform import google_compute_address.nat projects/sdypp082025/regions/us-east1/addresses/nat || true
+            terraform import google_compute_firewall.allow-ssh projects/sdypp082025/global/firewalls/allow-ssh || true
+            terraform import google_service_account.kubernetes projects/sdypp082025/serviceAccounts/kubernetes@sdypp082025.iam.gserviceaccount.com || true
+           
+            terraform validate
+
+            terraform plan -lock=false
+
+            terraform apply -lock=false --auto-approve
+        continue-on-error: true
+      # - name: Initialize Terraform
+      # working-directory: "TPFinal/Infraestructura/terraform servicios"
+      # run: terraform init
+      
+    # - name: Plan Terraform changes
+    #   working-directory: "TPFinal/Infraestructura/terraform servicios"
+    #   run: terraform plan
+
+    # - name: Apply Terraform changes
+    #   if: github.ref == 'refs/heads/main'
+    #   working-directory: "TPFinal/Infraestructura/terraform servicios"
+    #   run: terraform apply -auto-approve
+      - name: Crear credentials.json desde GitHub Secrets
+        run: |
+            echo '${{ secrets.GOOGLE_CLOUD_CREDENTIALS }}' > credentials.json
+
+      - name: Crear Secret con credentials.json en Kubernetes
+        run: |
+              kubectl delete secret gcp-credentials --ignore-not-found
+              kubectl create secret generic gcp-credentials --from-file=credentials.json
+              rm credentials.json

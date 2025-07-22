@@ -19,3 +19,93 @@ jobs:
         run: |
           echo '${{ secrets.GOOGLE_CLOUD_CREDENTIALS }}' > ${{ github.workspace }}/gcloud-key.json
           gcloud auth activate-service-account --key-file=${{ github.workspace }}/gcloud-key.json
+ 
+ 
+ 
+      - name: Authenticate with Google Cloud
+        run: |
+              echo '${{ secrets.GOOGLE_CLOUD_CREDENTIALS }}' > ${{ github.workspace }}/gcloud-key.json
+              gcloud auth activate-service-account --key-file=${{ github.workspace }}/gcloud-key.json
+  
+      - name: Configurar el proyecto en Google Cloud
+        run: |
+                gcloud config set project sdypp082025
+                gcloud config set compute/zone us-east1-c
+                gcloud config set compute/region us-east1
+
+      - name: Instalar gke-gcloud-auth-plugin manualmente
+        run: |
+                      echo "🔹 Instalando gke-gcloud-auth-plugin..."
+                      export CLOUD_SDK_REPO="cloud-sdk"
+                      echo "deb http://packages.cloud.google.com/apt $CLOUD_SDK_REPO main" | sudo tee -a /etc/apt/sources.list.d/google-cloud-sdk.list
+                      curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
+                      sudo apt-get update && sudo apt-get install -y google-cloud-sdk-gke-gcloud-auth-plugin
+                      echo "✅ Plugin instalado correctamente."
+
+
+      - name: Crear el clúster GKE si no existe
+        run: |
+          CLUSTER_NAME="cluster-integrador"
+          ZONE="us-east1-c"
+          PROJECT_ID="sdypp082025"
+
+          echo "🔍 Verificando si el clúster '$CLUSTER_NAME' ya existe..."
+          if ! gcloud container clusters describe $CLUSTER_NAME --zone $ZONE --project $PROJECT_ID >/dev/null 2>&1; then
+            echo "🚀 El clúster no existe, creando..."
+            gcloud container clusters create $CLUSTER_NAME \
+              --zone $ZONE \
+              --num-nodes 1 \
+              --project $PROJECT_ID
+            echo "✅ Clúster creado exitosamente."
+          else
+            echo "✔️ El clúster ya existe. No se necesita crear."
+          fi
+                  
+            
+          
+      - name: Configurar kubectl con credenciales de GKE
+        run: |
+                          echo "🔹 Obteniendo credenciales del clúster de GKE..."
+                          gcloud container clusters get-credentials cluster-integrador --zone us-east1-c --project sdypp082025
+                          kubectl config current-context
+                
+        
+      - name: Asignar permisos a la cuenta predeterminada de Compute Engine
+        run: |
+          set -e
+          COMPUTE_SA="295835202730-compute@developer.gserviceaccount.com"
+
+          echo "🔑 Asignando permisos de storage.objectAdmin..."
+          gcloud storage buckets add-iam-policy-binding gs://bucket_integrador_final082025 \
+            --member="serviceAccount:$COMPUTE_SA" \
+            --role="roles/storage.objectAdmin" || echo "⚠️ Warning: puede que ya existan los permisos."
+
+          echo "🔑 Asignando permisos de storage.admin..."
+          gcloud projects add-iam-policy-binding sdypp082025 \
+            --member="serviceAccount:$COMPUTE_SA" \
+            --role="roles/storage.admin" || echo "⚠️ Warning: puede que ya existan los permisos."
+
+      - name: Install dependencies (Coordinador)
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r TPFinal/blockchain/Coordinador/requirements.txt
+
+      # Verificar archivos en la carpeta Minero
+      - name: List files in Minero
+        run: |
+          ls TPFinal/blockchain/Minero
+
+    # Instalar dependencias en la carpeta Minero
+      - name: Install dependencies (Minero)
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r TPFinal/blockchain/Minero/requirements.txt
+
+      - name: Install Terraform
+        uses: hashicorp/setup-terraform@v1
+
+      - name: Authenticate with Google Cloud (Coordinador)
+        env:
+          GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS_COORDINADOR }}
+        run: |
+          echo '${{ secrets.GOOGLE_CREDENTIALS_COORDINADOR }}' > credentials.json
