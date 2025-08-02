@@ -162,7 +162,7 @@ jobs:
             terraform plan -lock=false
 
             terraform apply -lock=false --auto-approve
-      # continue-on-error: true
+      continue-on-error: true
       # - name: Initialize Terraform
       # working-directory: "TPFinal/Infraestructura/terraform servicios"
       # run: terraform init
