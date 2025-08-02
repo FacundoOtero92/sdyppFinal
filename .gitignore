@@ -1,4 +1,12 @@
 credentials.json
 TPFinal/blockchain/Minero/credentials.json
-**/.terraform/
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.backup
+*.tfvars
+crash.log
+*.tfplan
+.terraform.lock.hcl
+
 
