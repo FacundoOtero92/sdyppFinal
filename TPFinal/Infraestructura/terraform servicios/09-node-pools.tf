@@ -1,7 +1,7 @@
 
-# resource "google_service_account" "kubernetes" {
-#   account_id = "kubernetes"
-# }
+ resource "google_service_account" "kubernetes" {
+   account_id = "kubernetes"
+ }
 
 # resource "google_container_node_pool" "general" {
 #   name       = "general"
@@ -78,6 +78,7 @@ resource "google_container_node_pool" "apps_pool" {
   autoscaling {
     min_node_count = 1
     max_node_count = 4
+    
   }
 
   management {
