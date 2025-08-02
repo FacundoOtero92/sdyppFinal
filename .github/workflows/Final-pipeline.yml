@@ -276,24 +276,24 @@ jobs:
                 kubectl apply -f TPFinal/Infraestructura/k8s/worker-pool-deploy.yaml
  # kubectl scale deployment worker-cpu --replicas=0 Descomentar para que el worker- cpu deje de funcionar y darle solo al pool  
  
-    - name: Instalar Helm
-      uses: azure/setup-helm@v3
-      with:
-        version: 'v3.13.0'
-    - name: 🔄 Desinstalar Prometheus previo en default (si existe)
-      run: |
-        helm uninstall prometheus -n default || true
-        kubectl delete clusterrolebinding -l app.kubernetes.io/instance=prometheus --ignore-not-found
-        kubectl delete clusterrole -l app.kubernetes.io/instance=prometheus --ignore-not-found
+    # - name: Instalar Helm
+    #   uses: azure/setup-helm@v3
+    #   with:
+    #     version: 'v3.13.0'
+    # - name: 🔄 Desinstalar Prometheus previo en default (si existe)
+    #   run: |
+    #     helm uninstall prometheus -n default || true
+    #     kubectl delete clusterrolebinding -l app.kubernetes.io/instance=prometheus --ignore-not-found
+    #     kubectl delete clusterrole -l app.kubernetes.io/instance=prometheus --ignore-not-found
 
-    - name: 📦 Instalar Prometheus en namespace monitoring
-      run: |
-        helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
-        helm repo update
-        helm upgrade --install prometheus prometheus-community/kube-prometheus-stack \
-          -n monitoring --create-namespace
+    # - name: 📦 Instalar Prometheus en namespace monitoring
+    #   run: |
+    #     helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+    #     helm repo update
+    #     helm upgrade --install prometheus prometheus-community/kube-prometheus-stack \
+    #       -n monitoring --create-namespace
 
-    - name: Exponer Prometheus
-      run: |
-       kubectl expose deploy prometheus-kube-prometheus-prometheus \
-        --type=LoadBalancer --name=prometheus-lb || true
+    # - name: Exponer Prometheus
+    #   run: |
+    #    kubectl expose deploy prometheus-kube-prometheus-prometheus \
+    #     --type=LoadBalancer --name=prometheus-lb || true
