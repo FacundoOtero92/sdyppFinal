@@ -52,7 +52,7 @@ resource "google_container_node_pool" "services_pool" {
   node_config {
     machine_type = "e2-medium"
     labels = {
-      type = "servicio"
+       type = "servicio"
     }
     service_account = google_service_account.kubernetes.email
     oauth_scopes = ["https://www.googleapis.com/auth/cloud-platform"]
