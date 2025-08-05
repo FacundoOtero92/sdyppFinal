@@ -55,7 +55,7 @@ jobs:
           echo "🚀 El clúster no existe, creando..."
           gcloud container clusters create $CLUSTER_NAME \
             --zone $ZONE \
-            --num-nodes= 0 \
+            --num-nodes= 1 \
             --project $PROJECT_ID
           echo "✅ Clúster creado exitosamente."
         else
