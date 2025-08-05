@@ -53,10 +53,8 @@ jobs:
         echo "🔍 Verificando si el clúster '$CLUSTER_NAME' ya existe..."
         if ! gcloud container clusters describe $CLUSTER_NAME --zone $ZONE --project $PROJECT_ID >/dev/null 2>&1; then
           echo "🚀 El clúster no existe, creando..."
-          gcloud container clusters create $CLUSTER_NAME \
-            --zone $ZONE \
-            --num-nodes 1 \
-            --project $PROJECT_ID
+            gcloud container clusters create cluster-integrador --zone us-east1-c --project sdypp082025 --num-nodes 1 --no-enable-basic-auth --no-enable-default-node-pool --no-enable-autoupgrade --no-enable-autorepair
+
           echo "✅ Clúster creado exitosamente."
         else
           echo "✔️ El clúster ya existe. No se necesita crear."
