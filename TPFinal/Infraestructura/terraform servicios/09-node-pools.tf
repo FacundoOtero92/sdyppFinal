@@ -10,6 +10,7 @@ resource "google_container_node_pool" "apps_pool" {
   cluster    = google_container_cluster.cluster-integrador.id
   location   = var.region
   node_count = 1
+  depends_on = [google_container_cluster.cluster-integrador]
 
   autoscaling {
     min_node_count = 1
@@ -38,6 +39,7 @@ resource "google_container_node_pool" "services_pool" {
   cluster    = google_container_cluster.cluster-integrador.id
   location   = var.region
   node_count = 1
+  depends_on = [google_container_cluster.cluster-integrador]
 
   autoscaling {
     min_node_count = 1
