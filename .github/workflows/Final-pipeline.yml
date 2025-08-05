@@ -44,80 +44,6 @@ jobs:
                     echo "✅ Plugin instalado correctamente."
 
 
-    - name: Crear el clúster GKE si no existe
-      run: |
-        CLUSTER_NAME="cluster-integrador"
-        ZONE="us-east1-c"
-        PROJECT_ID="sdypp082025"
-
-        echo "🔍 Verificando si el clúster '$CLUSTER_NAME' ya existe..."
-        if ! gcloud container clusters describe $CLUSTER_NAME --zone $ZONE --project $PROJECT_ID >/dev/null 2>&1; then
-          echo "🚀 El clúster no existe, creando..."
-          gcloud container clusters create $CLUSTER_NAME \
-            --zone $ZONE \
-            --num-nodes 0 \
-            --project $PROJECT_ID
-          echo "✅ Clúster creado exitosamente."
-        else
-          echo "✔️ El clúster ya existe. No se necesita crear."
-        fi
-                
-          
-         
-    - name: Configurar kubectl con credenciales de GKE
-      run: |
-                        echo "🔹 Obteniendo credenciales del clúster de GKE..."
-                        gcloud container clusters get-credentials cluster-integrador --zone us-east1-c --project sdypp082025
-                        kubectl config current-context
-              
-      
-    - name: Asignar permisos a la cuenta predeterminada de Compute Engine
-      run: |
-        set -e
-        COMPUTE_SA="295835202730-compute@developer.gserviceaccount.com"
-
-        echo "🔑 Asignando permisos de storage.objectAdmin..."
-        gcloud storage buckets add-iam-policy-binding gs://bucket_integrador_final082025 \
-          --member="serviceAccount:$COMPUTE_SA" \
-          --role="roles/storage.objectAdmin" || echo "⚠️ Warning: puede que ya existan los permisos."
-
-        echo "🔑 Asignando permisos de storage.admin..."
-        gcloud projects add-iam-policy-binding sdypp082025 \
-          --member="serviceAccount:$COMPUTE_SA" \
-          --role="roles/storage.admin" || echo "⚠️ Warning: puede que ya existan los permisos."
-
-                  
-                  
-
-
-    - name: Install dependencies (Coordinador)
-      run: |
-        python -m pip install --upgrade pip
-        pip install -r TPFinal/blockchain/Coordinador/requirements.txt
-
-     # Verificar archivos en la carpeta Minero
-    - name: List files in Minero
-      run: |
-       ls TPFinal/blockchain/Minero
-
-   # Instalar dependencias en la carpeta Minero
-    - name: Install dependencies (Minero)
-      run: |
-       python -m pip install --upgrade pip
-       pip install -r TPFinal/blockchain/Minero/requirements.txt
-
-    - name: Install Terraform
-      uses: hashicorp/setup-terraform@v1
-
-    - name: Authenticate with Google Cloud (Coordinador)
-      env:
-        GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS_COORDINADOR }}
-      run: |
-        echo '${{ secrets.GOOGLE_CREDENTIALS_COORDINADOR }}' > credentials.json
-   
-
-
-
      # Setup de CLI de Terraform
     - name: Terraform setup
       uses: hashicorp/setup-terraform@v3
@@ -186,6 +112,63 @@ jobs:
               rm credentials.json
                
 
+          
+         
+    - name: Configurar kubectl con credenciales de GKE
+      run: |
+                        echo "🔹 Obteniendo credenciales del clúster de GKE..."
+                        gcloud container clusters get-credentials cluster-integrador --zone us-east1-c --project sdypp082025
+                        kubectl config current-context
+              
+      
+    - name: Asignar permisos a la cuenta predeterminada de Compute Engine
+      run: |
+        set -e
+        COMPUTE_SA="295835202730-compute@developer.gserviceaccount.com"
+
+        echo "🔑 Asignando permisos de storage.objectAdmin..."
+        gcloud storage buckets add-iam-policy-binding gs://bucket_integrador_final082025 \
+          --member="serviceAccount:$COMPUTE_SA" \
+          --role="roles/storage.objectAdmin" || echo "⚠️ Warning: puede que ya existan los permisos."
+
+        echo "🔑 Asignando permisos de storage.admin..."
+        gcloud projects add-iam-policy-binding sdypp082025 \
+          --member="serviceAccount:$COMPUTE_SA" \
+          --role="roles/storage.admin" || echo "⚠️ Warning: puede que ya existan los permisos."
+
+                  
+                  
+
+
+    - name: Install dependencies (Coordinador)
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r TPFinal/blockchain/Coordinador/requirements.txt
+
+     # Verificar archivos en la carpeta Minero
+    - name: List files in Minero
+      run: |
+       ls TPFinal/blockchain/Minero
+
+   # Instalar dependencias en la carpeta Minero
+    - name: Install dependencies (Minero)
+      run: |
+       python -m pip install --upgrade pip
+       pip install -r TPFinal/blockchain/Minero/requirements.txt
+
+    - name: Install Terraform
+      uses: hashicorp/setup-terraform@v1
+
+    - name: Authenticate with Google Cloud (Coordinador)
+      env:
+        GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS_COORDINADOR }}
+      run: |
+        echo '${{ secrets.GOOGLE_CREDENTIALS_COORDINADOR }}' > credentials.json
+   
+
+
+
+    
     - name: Build and Push Docker Image (Coordinador)
       run: |
         docker build -f TPFinal/blockchain/Coordinador/dockerfile.dockerfile -t facundootero/coordinador:latest TPFinal/blockchain/Coordinador
