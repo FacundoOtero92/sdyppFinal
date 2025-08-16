@@ -5,5 +5,3 @@ numpy
 redis
 requests
 google-cloud-storage
-prometheus_client
-

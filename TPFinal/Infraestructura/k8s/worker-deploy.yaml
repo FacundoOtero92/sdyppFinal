@@ -1,34 +1,3 @@
-# apiVersion: apps/v1
-# kind: Deployment
-# metadata:
-#   name: worker-cpu
-# spec:
-#   replicas: 2
-#   selector:
-#     matchLabels:
-#       app: worker-cpu
-#   template:
-#     metadata:
-#       labels:
-#         app: worker-cpu
-#     spec:
-#       containers:
-#       - name: worker-cpu
-#         image: facundootero/worker-cpu:latest
-#         env:
-#         - name: RABBITMQ_HOST
-#           value: "rabbitmq"
-#         - name: RABBITMQ_PORT
-#           value: "5672"
-#         - name: COORDINATOR_URL
-#           value: "http://coordinador-integrador:5000/solved_task"
-#         resources:  # ✅ `resources` ahora está fuera de `env`, en el nivel correcto
-#           limits:
-#             cpu: "150m"
-#             memory: "96Mi"
-#           requests:
-#             cpu: "50m"
-#             memory: "32Mi"
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -43,20 +12,6 @@ spec:
       labels:
         app: worker-cpu
     spec:
-      affinity:
-        nodeAffinity:
-          requiredDuringSchedulingIgnoredDuringExecution:
-            nodeSelectorTerms:
-              - matchExpressions:
-                  - key: type
-                    operator: In
-                    values:
-                      - aplicacion
-      tolerations:
-        - key: "instance_type"
-          operator: "Equal"
-          value: "spot"
-          effect: "NoSchedule"
       containers:
       - name: worker-cpu
         image: facundootero/worker-cpu:latest
@@ -67,7 +22,7 @@ spec:
           value: "5672"
         - name: COORDINATOR_URL
           value: "http://coordinador-integrador:5000/solved_task"
-        resources:
+        resources:  # ✅ `resources` ahora está fuera de `env`, en el nivel correcto
           limits:
             cpu: "150m"
             memory: "96Mi"
