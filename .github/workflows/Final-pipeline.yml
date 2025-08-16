@@ -263,18 +263,18 @@ jobs:
                     kubectl apply -f TPFinal/Infraestructura/k8s/worker-deploy.yaml
                              
 
-    - name: 🏗️ Construcción de la imagen del Worker Pool
-      run: |
-             docker build -f TPFinal/blockchain/Minero/worker_pool.dockerfile -t facundootero/worker-pool:latest TPFinal/blockchain/Minero
+#     - name: 🏗️ Construcción de la imagen del Worker Pool
+#       run: |
+#              docker build -f TPFinal/blockchain/Minero/worker_pool.dockerfile -t facundootero/worker-pool:latest TPFinal/blockchain/Minero
             
-    - name: 📤 Subir imagen al DockerHub
-      run: docker push facundootero/worker-pool:latest
+#     - name: 📤 Subir imagen al DockerHub
+#       run: docker push facundootero/worker-pool:latest
             
-    - name: 🚀 Desplegar Worker Pool en Kubernetes
-      run: |    
+#     - name: 🚀 Desplegar Worker Pool en Kubernetes
+#       run: |    
       
-                kubectl apply -f TPFinal/Infraestructura/k8s/worker-pool-deploy.yaml
- # kubectl scale deployment worker-cpu --replicas=0 Descomentar para que el worker- cpu deje de funcionar y darle solo al pool  
+#                 kubectl apply -f TPFinal/Infraestructura/k8s/worker-pool-deploy.yaml
+#  # kubectl scale deployment worker-cpu --replicas=0 Descomentar para que el worker- cpu deje de funcionar y darle solo al pool  
  
     # - name: Instalar Helm
     #   uses: azure/setup-helm@v3
