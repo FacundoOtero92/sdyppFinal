@@ -129,7 +129,7 @@ def postBlock(block):
 
 
 
-# --- TERMINAN METODOS REDIS --- #
+#  --- TERMINAN METODOS REDIS --- #
 
 
 def subirBlock(bucket,block): #bucket, block
