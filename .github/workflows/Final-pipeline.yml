@@ -260,7 +260,7 @@ jobs:
             
     - name: Apply Kubernetes Deployment (Worker)
       run: |
-                    kubectl apply -f TPFinal/Infraestructura/k8s/worker-deploy.yaml
+                     kubectl apply -f TPFinal/Infraestructura/k8s/worker-deploy.yaml
                              
 
 #     - name: 🏗️ Construcción de la imagen del Worker Pool
