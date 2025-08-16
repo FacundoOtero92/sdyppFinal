@@ -19,7 +19,7 @@ queueNameTx = 'QueueTransactions'
 exchangeBlock = 'ExchangeBlock'
 timer = 15
 datosBucket = []
-bucketName = 'bucket_integrador_final2025'
+bucketName = 'bucket_integrador_final082025'
 credentialPath = 'credentials.json'
 
 
