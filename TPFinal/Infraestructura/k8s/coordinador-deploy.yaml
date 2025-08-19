@@ -14,9 +14,8 @@ spec:
     spec:
       serviceAccountName: default  # ✅ Asegurar que no sea `null`
       containers:
-      - name: coordinador
+      - name:  coordinador
         image: facundootero/coordinador:latest  # ✅ Se actualizará automáticamente
-        imagePullPolicy: Always 
         ports:
         - containerPort: 5000
 
