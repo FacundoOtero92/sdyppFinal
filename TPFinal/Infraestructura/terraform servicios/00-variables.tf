@@ -39,11 +39,14 @@ variable "imagen" {
   type    = string
   default = "ubuntu-os-cloud/ubuntu-2204-lts"
 }
+# variable "metadata_startup_script" {
+#   type    = string
+#   default = "../requeriments.sh"
+# }
 variable "metadata_startup_script" {
   type    = string
-  default = "../requeriments.sh"
+  default = "${path.module}/worker_cpu.sh"
 }
-
 #####Balancer    ####
 
 variable "balancer_name" { default = "balancer" }
