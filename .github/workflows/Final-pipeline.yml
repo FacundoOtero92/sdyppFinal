@@ -297,6 +297,7 @@
 #     #   run: |
 #     #    kubectl expose deploy prometheus-kube-prometheus-prometheus \
 #     #     --type=LoadBalancer --name=prometheus-lb || true
+
 name: Terraform and Kubernetes Deployment
 
 on:
@@ -324,44 +325,50 @@ jobs:
       with:
         python-version: '3.x'
 
-    # Autenticación gcloud con SA del secret
-    - name: Authenticate with Google Cloud
+    - name: Authenticate with Google Cloud (SA)
       run: |
         echo '${{ secrets.GOOGLE_CLOUD_CREDENTIALS }}' > ${{ github.workspace }}/gcloud-key.json
         gcloud auth activate-service-account --key-file=${{ github.workspace }}/gcloud-key.json
         gcloud config set project "$PROJECT_ID"
         gcloud config set compute/zone "$ZONE"
         gcloud config set compute/region "$REGION"
+        gcloud --version
 
-    - name: Instalar gke-gcloud-auth-plugin
+    - name: Install GKE auth plugin + kubectl
       run: |
         export CLOUD_SDK_REPO="cloud-sdk"
         echo "deb http://packages.cloud.google.com/apt $CLOUD_SDK_REPO main" | sudo tee -a /etc/apt/sources.list.d/google-cloud-sdk.list
         curl -fsSL https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
-        sudo apt-get update && sudo apt-get install -y google-cloud-sdk-gke-gcloud-auth-plugin
+        sudo apt-get update
+        sudo apt-get install -y google-cloud-sdk-gke-gcloud-auth-plugin kubectl
 
-    # --- Terraform ---------------------------------------------------------
-    - name: Verificar/crear bucket backend
+    - name: Ensure backend bucket exists
       run: |
         if ! gsutil ls -b gs://$BACKEND_BUCKET 2>/dev/null; then
           gsutil mb -p "$PROJECT_ID" -c STANDARD -l "$REGION" gs://$BACKEND_BUCKET
         fi
 
-    - name: Terraform init/plan/apply (con auto-import)
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v3
+      with:
+        terraform_wrapper: false
+
+    - name: Terraform init/plan/apply (auto-import existentes)
       working-directory: "TPFinal/Infraestructura/terraform servicios"
       env:
         GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CLOUD_CREDENTIALS }}
       run: |
         set -euxo pipefail
 
+        # Creds para el provider google
         echo '${{ secrets.GOOGLE_CLOUD_CREDENTIALS }}' > credentials.json
 
-        terraform version
+        terraform -version
         terraform init -upgrade -reconfigure \
           --backend-config="bucket=${BACKEND_BUCKET}" \
           --backend-config="prefix=${BACKEND_PREFIX}"
 
-        # Función para importar si no está en el state
+        # Helpers de import
         tf_in_state() { terraform state show "$1" >/dev/null 2>&1; }
         tf_import_if_missing () {
           local addr="$1"; shift
@@ -374,30 +381,38 @@ jobs:
           fi
         }
 
-        # Ajusta estos import a lo que ya creaste manualmente:
+        # Importá SOLO lo que ya creaste manualmente en GCP (ajustá nombres si difieren)
         tf_import_if_missing google_compute_network.main "projects/${PROJECT_ID}/global/networks/main"
         tf_import_if_missing google_compute_firewall.allow-ssh "projects/${PROJECT_ID}/global/firewalls/allow-ssh"
-        # (Si abriste el puerto 5000 manualmente)
+        # regla opcional para puerto 5000 si existe
         tf_import_if_missing google_compute_firewall.allow-worker-5000 "projects/${PROJECT_ID}/global/firewalls/allow-worker-5000"
-        # NAT regional (¡ojo! región, no zona)
+        # dirección NAT regional (¡usar REGION, no ZONE!)
         tf_import_if_missing google_compute_address.nat "projects/${PROJECT_ID}/regions/${REGION}/addresses/nat"
-        # SA de k8s si la tienes creada:
+        # service account de k8s si la tenés creada previamente
         tf_import_if_missing google_service_account.kubernetes "projects/${PROJECT_ID}/serviceAccounts/kubernetes@${PROJECT_ID}.iam.gserviceaccount.com"
 
         terraform validate
-        # Forzar al menos 1 instancia por si la variable no viene
         terraform plan -refresh=true -input=false -no-color -var="instancias=1" -out=tfplan
         terraform show -no-color tfplan
         terraform apply -input=false -auto-approve tfplan
 
-        # (Opcional) Mostrar VMs creadas
+        # Mostrar VMs creadas (info)
         gcloud compute instances list --filter="name~'worker-cpu'" || true
 
-    # --- K8s ---------------------------------------------------------------
-    - name: Obtener credenciales de GKE
+    # ---- Kubernetes -------------------------------------------------------
+
+    - name: Get GKE credentials
       run: |
         gcloud container clusters get-credentials cluster-integrador --zone "$ZONE" --project "$PROJECT_ID"
+        kubectl config current-context
         kubectl get nodes
+
+    - name: Create Secret with GCP credentials for pods
+      run: |
+        echo '${{ secrets.GOOGLE_CLOUD_CREDENTIALS }}' > credentials.json
+        kubectl delete secret gcp-credentials --ignore-not-found
+        kubectl create secret generic gcp-credentials --from-file=credentials.json
+        rm -f credentials.json
 
     - name: Deploy RabbitMQ
       run: kubectl apply --validate=false -f TPFinal/Infraestructura/k8s/rabbit-deploy.yaml
@@ -408,8 +423,9 @@ jobs:
         kubectl get pods
         kubectl get svc redis-integrador
 
-    # Build & push imágenes (recomendado: tag por commit)
-    - name: Build & Push Coordinador
+    # ---- Imágenes & Deploys ----------------------------------------------
+
+    - name: Build & Push Coordinador image
       env:
         IMAGE_TAG: ${{ github.sha }}
       run: |
@@ -419,21 +435,21 @@ jobs:
         docker push facundootero/coordinador:${IMAGE_TAG}
         echo "IMAGE_TAG=${IMAGE_TAG}" >> $GITHUB_ENV
 
-    - name: Deploy Coordinador (set-image + wait)
+    - name: Deploy Coordinador (set image + rollout)
       run: |
         kubectl apply -f TPFinal/Infraestructura/k8s/coordinador-deploy.yaml
         kubectl set image deployment/coordinador coordinador=facundootero/coordinador:${IMAGE_TAG} --record
         kubectl rollout status deployment/coordinador --timeout=180s
 
-    - name: Obtener IP pública del Coordinador
+    - name: Wait for Coordinador external IP
       run: |
         for i in {1..15}; do
           IP=$(kubectl get svc coordinador-integrador -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
           if [[ -n "$IP" ]]; then echo "COORDINADOR_IP=$IP" >> $GITHUB_ENV; echo "IP: $IP"; break; fi
-          echo "Esperando IP..."; sleep 10
+          echo "Esperando IP pública..."; sleep 10
         done
 
-    - name: Build & Push Worker
+    - name: Build & Push Worker image
       env:
         WORKER_TAG: ${{ github.sha }}
       run: |
@@ -443,7 +459,7 @@ jobs:
         docker push facundootero/worker-cpu:${WORKER_TAG}
         echo "WORKER_TAG=${WORKER_TAG}" >> $GITHUB_ENV
 
-    - name: Deploy Worker (set-image + wait)
+    - name: Deploy Worker (set image + rollout)
       run: |
         kubectl apply -f TPFinal/Infraestructura/k8s/worker-deploy.yaml
         kubectl set image deployment/worker-cpu worker-cpu=facundootero/worker-cpu:${WORKER_TAG} --record || true
